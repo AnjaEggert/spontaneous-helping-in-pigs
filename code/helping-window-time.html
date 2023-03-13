@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Liza Moscovice, Anja Eggert and Jean-Loup Rault">
+<meta name="dcterms.date" content="2023-03-13">
+
+<title>Likelihood of helping and window time</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="helping-window-time_files/libs/clipboard/clipboard.min.js"></script>
+<script src="helping-window-time_files/libs/quarto-html/quarto.js"></script>
+<script src="helping-window-time_files/libs/quarto-html/popper.min.js"></script>
+<script src="helping-window-time_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="helping-window-time_files/libs/quarto-html/anchor.min.js"></script>
+<link href="helping-window-time_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="helping-window-time_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="helping-window-time_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="helping-window-time_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="helping-window-time_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#libraries" id="toc-libraries" class="nav-link active" data-scroll-target="#libraries">Libraries</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#read-data" id="toc-read-data" class="nav-link" data-scroll-target="#read-data">Read data</a></li>
+  <li><a href="#zero-inflated-negative-binomial-model" id="toc-zero-inflated-negative-binomial-model" class="nav-link" data-scroll-target="#zero-inflated-negative-binomial-model">Zero-inflated negative binomial model</a>
+  <ul class="collapse">
+  <li><a href="#run-full-model" id="toc-run-full-model" class="nav-link" data-scroll-target="#run-full-model">Run full model</a></li>
+  <li><a href="#run-reduced-model" id="toc-run-reduced-model" class="nav-link" data-scroll-target="#run-reduced-model">Run reduced model</a></li>
+  <li><a href="#model-comparison" id="toc-model-comparison" class="nav-link" data-scroll-target="#model-comparison">Model comparison</a></li>
+  <li><a href="#summary-of-model" id="toc-summary-of-model" class="nav-link" data-scroll-target="#summary-of-model">Summary of model</a></li>
+  <li><a href="#performance-of-model" id="toc-performance-of-model" class="nav-link" data-scroll-target="#performance-of-model">Performance of model</a></li>
+  </ul></li>
+  <li><a href="#plot" id="toc-plot" class="nav-link" data-scroll-target="#plot">Plot</a>
+  <ul class="collapse">
+  <li><a href="#dummy-coding" id="toc-dummy-coding" class="nav-link" data-scroll-target="#dummy-coding">Dummy-coding</a></li>
+  <li><a href="#run-plot-model" id="toc-run-plot-model" class="nav-link" data-scroll-target="#run-plot-model">Run plot model</a></li>
+  <li><a href="#extract-fixed-effects" id="toc-extract-fixed-effects" class="nav-link" data-scroll-target="#extract-fixed-effects">Extract fixed effects</a></li>
+  <li><a href="#plot-it" id="toc-plot-it" class="nav-link" data-scroll-target="#plot-it">Plot it</a></li>
+  </ul></li>
+  <li><a href="#how-to-cite-r" id="toc-how-to-cite-r" class="nav-link" data-scroll-target="#how-to-cite-r">How to cite R</a></li>
+  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info">Session Info</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Likelihood of helping and window time</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Liza Moscovice, Anja Eggert and Jean-Loup Rault </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 13, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="libraries" class="level1">
+<h1>Libraries</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)     <span class="co"># tidy universe</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(viridis)       <span class="co"># color scale</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmmTMB)       <span class="co"># neg. binomial model</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)   <span class="co"># testZeroInflation()</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DHARMa)        <span class="co"># model diagnostics</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fastDummies)   <span class="co"># dummy-coding</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1989</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data" class="level1">
+<h1>Data</h1>
+<p>Likelihood of helping of the potential helper and the attentiveness to trapped pigs.</p>
+</section>
+<section id="read-data" class="level1">
+<h1>Read data</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../data/helping-window-time.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 638 Columns: 27
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (11): trapped.pig.uniq.id, uniq.group, trial, pot.helper.uniq.id, relate...
+dbl (16): group.trapped.pig.order, pot.helper.response, test.dur.look.s.per....
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>spec_tbl_df [638 × 27] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ trapped.pig.uniq.id                : chr [1:638] "DG2_F_3" "DG2_F_3" "DG2_F_3" "DG2_F_3" ...
+ $ uniq.group                         : chr [1:638] "DG2_F" "DG2_F" "DG2_F" "DG2_F" ...
+ $ trial                              : chr [1:638] "DG2_F3_070920" "DG2_F3_070920" "DG2_F3_070920" "DG2_F3_070920" ...
+ $ group.trapped.pig.order            : num [1:638] 1 1 1 1 1 1 1 2 2 2 ...
+ $ pot.helper.uniq.id                 : chr [1:638] "DG2_F_2" "DG2_F_4" "DG2_F_5" "DG2_F_6" ...
+ $ pot.helper.response                : num [1:638] 0 0 0 0 0 0 0 0 0 0 ...
+ $ related                            : chr [1:638] "y" "n" "n" "n" ...
+ $ pot.helper.helped.by.trapped.before: chr [1:638] "No" "No" "No" "No" ...
+ $ trapped.before                     : chr [1:638] "n" "n" "n" "n" ...
+ $ trapped.pig.helped.others.before   : chr [1:638] "n" "n" "n" "n" ...
+ $ pothelper.sex                      : chr [1:638] "Female" "Male" "Male" "Female" ...
+ $ test.dur.look.s.per.min            : num [1:638] 2.78 0 0 1.08 3.6 ...
+ $ pretrial.rate.curio.min            : num [1:638] 0 0 0 0 0 ...
+ $ pretrial.open.yn                   : chr [1:638] "No" "No" "No" "No" ...
+ $ train.rate.curio.min               : num [1:638] 0.417 0.675 0.433 0.383 0.442 ...
+ $ train.rate.open                    : num [1:638] 0.18333 0.04167 0.01667 0.00833 0.06667 ...
+ $ lat.helped.min                     : num [1:638] 20 NA NA 20 20 20 20 20 20 20 ...
+ $ test.dur.look.window               : num [1:638] 55.7 NA NA 21.6 71.9 ...
+ $ test.count.look.window             : num [1:638] 9 NA NA 4 11 0 1 2 2 6 ...
+ $ test.curios.score                  : num [1:638] 3 NA NA 0 4 0 1 0 0 2 ...
+ $ pretrial.curio.yn                  : num [1:638] 0 0 0 0 0 1 1 0 0 0 ...
+ $ trapped.pig.sow                    : num [1:638] 6232 6232 6232 6232 6232 ...
+ $ trapped.pig.sex                    : chr [1:638] "Female" "Female" "Female" "Female" ...
+ $ test.count.look.per.testmin        : num [1:638] 0.45 0 0 0.2 0.55 0 0.05 0.1 0.1 0.3 ...
+ $ test.rate.curio.min                : num [1:638] 0.15 0 0 0 0.2 0 0.05 0 0 0.1 ...
+ $ pretrial.rate.open.min             : num [1:638] 0 0 0 0 0 0 0 0 0 0 ...
+ $ pothelper.mom                      : num [1:638] 6232 6235 6235 6235 5952 ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   trapped.pig.uniq.id = col_character(),
+  ..   uniq.group = col_character(),
+  ..   trial = col_character(),
+  ..   group.trapped.pig.order = col_double(),
+  ..   pot.helper.uniq.id = col_character(),
+  ..   pot.helper.response = col_double(),
+  ..   related = col_character(),
+  ..   pot.helper.helped.by.trapped.before = col_character(),
+  ..   trapped.before = col_character(),
+  ..   trapped.pig.helped.others.before = col_character(),
+  ..   pothelper.sex = col_character(),
+  ..   test.dur.look.s.per.min = col_double(),
+  ..   pretrial.rate.curio.min = col_double(),
+  ..   pretrial.open.yn = col_character(),
+  ..   train.rate.curio.min = col_double(),
+  ..   train.rate.open = col_double(),
+  ..   lat.helped.min = col_double(),
+  ..   test.dur.look.window = col_double(),
+  ..   test.count.look.window = col_double(),
+  ..   test.curios.score = col_double(),
+  ..   pretrial.curio.yn = col_double(),
+  ..   trapped.pig.sow = col_double(),
+  ..   trapped.pig.sex = col_character(),
+  ..   test.count.look.per.testmin = col_double(),
+  ..   test.rate.curio.min = col_double(),
+  ..   pretrial.rate.open.min = col_double(),
+  ..   pothelper.mom = col_double()
+  .. )
+ - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
+</div>
+</div>
+</section>
+<section id="zero-inflated-negative-binomial-model" class="level1">
+<h1>Zero-inflated negative binomial model</h1>
+<p>The zero-inflation model describes the probability of observing an extra (i.e., structural) zero that is not generated by the conditional model.</p>
+<ul>
+<li>fit the model with zero-inflation is assumed to be constant across the data set (<code>ziformula = ~ 1</code>), <em>i.e.</em>, zero-inflation is independent of the predictor variables</li>
+<li>chose <code>family = negbinom2</code>, <em>i.e.</em>, a negative binomial distribution in which the variance increases quadratically with the mean</li>
+</ul>
+<section id="run-full-model" class="level2">
+<h2 class="anchored" data-anchor-id="run-full-model">Run full model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>contr <span class="ot">=</span> <span class="fu">glmmTMBControl</span>(<span class="at">optimizer =</span> optim, <span class="at">optArgs =</span> <span class="fu">list</span>(<span class="at">method=</span><span class="st">"BFGS"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(pot.helper.response <span class="sc">~</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># fixed, continuous predictors</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(test.dur.look.s.per.min))    <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(<span class="fu">sqrt</span>(train.rate.open)))      <span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(<span class="fu">sqrt</span>(train.rate.curio.min))) <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(group.trapped.pig.order))    <span class="sc">+</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># fixed, categorical predictors</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                 pretrial.open.yn                    <span class="sc">+</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                 pothelper.sex                       <span class="sc">+</span> </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                 related                             <span class="sc">+</span> </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># random effects</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                 (<span class="dv">1</span><span class="sc">|</span>pot.helper.uniq.id),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>               <span class="co"># Negative binomial distribution</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>               <span class="at">family =</span> <span class="st">"nbinom2"</span>,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>               <span class="co"># expect zero-inflation equal in all obs</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>               <span class="at">ziformula =</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>               <span class="co"># data set</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>               <span class="at">data   =</span> dat,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>               <span class="co"># numerical optimizer</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>               <span class="at">control =</span> contr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="run-reduced-model" class="level2">
+<h2 class="anchored" data-anchor-id="run-reduced-model">Run reduced model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mod.red <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(pot.helper.response <span class="sc">~</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                     <span class="co"># fixed, continuous predictors</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">as.vector</span>(<span class="fu">scale</span>(<span class="fu">sqrt</span>(train.rate.curio.min))) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">as.vector</span>(<span class="fu">scale</span>(group.trapped.pig.order))    <span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                     <span class="co"># fixed, categorical predictors</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                     pretrial.open.yn                    <span class="sc">+</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                     pothelper.sex                       <span class="sc">+</span> </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                     related                             <span class="sc">+</span> </span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                     <span class="co"># random effects</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                     (<span class="dv">1</span><span class="sc">|</span>pot.helper.uniq.id),</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># Negative binomial distribution</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                   <span class="at">family =</span> <span class="st">"nbinom2"</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># expect zero-inflation equal in all obs</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ziformula =</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># data set</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data   =</span> dat,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># numerical optimizer</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>                   <span class="at">control =</span> contr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="model-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="model-comparison">Model comparison</h2>
+<ul>
+<li>Likelihood ratio test compares goodness of fit of of the reduced and the full model, <em>i.e.</em>, determine whether or not adding complexity (adding more parameters) makes the full model significantly more accurate</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod.red, mod, <span class="at">test=</span><span class="st">'Chisq'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Data: dat
+Models:
+mod.red: pot.helper.response ~ as.vector(scale(sqrt(train.rate.curio.min))) + , zi=~1, disp=~1
+mod.red:     as.vector(scale(group.trapped.pig.order)) + pretrial.open.yn + , zi=~1, disp=~1
+mod.red:     pothelper.sex + related + (1 | pot.helper.uniq.id), zi=~1, disp=~1
+mod: pot.helper.response ~ as.vector(scale(test.dur.look.s.per.min)) + , zi=~1, disp=~1
+mod:     as.vector(scale(sqrt(train.rate.open))) + as.vector(scale(sqrt(train.rate.curio.min))) + , zi=~1, disp=~1
+mod:     as.vector(scale(group.trapped.pig.order)) + pretrial.open.yn + , zi=~1, disp=~1
+mod:     pothelper.sex + related + (1 | pot.helper.uniq.id), zi=~1, disp=~1
+        Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(&gt;Chisq)    
+mod.red  9 418.03 458.15 -200.01   400.03                             
+mod     11 377.12 426.16 -177.56   355.12 44.912      2  1.768e-10 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="summary-of-model" class="level2">
+<h2 class="anchored" data-anchor-id="summary-of-model">Summary of model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: nbinom2  ( log )
+Formula:          
+pot.helper.response ~ as.vector(scale(test.dur.look.s.per.min)) +  
+    as.vector(scale(sqrt(train.rate.open))) + as.vector(scale(sqrt(train.rate.curio.min))) +  
+    as.vector(scale(group.trapped.pig.order)) + pretrial.open.yn +  
+    pothelper.sex + related + (1 | pot.helper.uniq.id)
+Zero inflation:                       ~1
+Data: dat
+
+     AIC      BIC   logLik deviance df.resid 
+   377.1    426.2   -177.6    355.1      627 
+
+Random effects:
+
+Conditional model:
+ Groups             Name        Variance Std.Dev.
+ pot.helper.uniq.id (Intercept) 0.3152   0.5614  
+Number of obs: 638, groups:  pot.helper.uniq.id, 75
+
+Dispersion parameter for nbinom2 family (): 2.2e+05 
+
+Conditional model:
+                                              Estimate Std. Error z value
+(Intercept)                                  -2.480020   0.268333  -9.242
+as.vector(scale(test.dur.look.s.per.min))     0.573180   0.086978   6.590
+as.vector(scale(sqrt(train.rate.open)))       0.379427   0.159425   2.380
+as.vector(scale(sqrt(train.rate.curio.min))) -0.135708   0.156297  -0.868
+as.vector(scale(group.trapped.pig.order))    -0.007647   0.127279  -0.060
+pretrial.open.ynYes                           0.111003   0.422169   0.263
+pothelper.sexMale                            -0.364889   0.317523  -1.149
+relatedy                                     -0.526531   0.278625  -1.890
+                                             Pr(&gt;|z|)    
+(Intercept)                                   &lt; 2e-16 ***
+as.vector(scale(test.dur.look.s.per.min))     4.4e-11 ***
+as.vector(scale(sqrt(train.rate.open)))        0.0173 *  
+as.vector(scale(sqrt(train.rate.curio.min)))   0.3852    
+as.vector(scale(group.trapped.pig.order))      0.9521    
+pretrial.open.ynYes                            0.7926    
+pothelper.sexMale                              0.2505    
+relatedy                                       0.0588 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Zero-inflation model:
+            Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept)   -15.94     813.91   -0.02    0.984</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: pot.helper.response
+                                               Chisq Df Pr(&gt;Chisq)    
+as.vector(scale(test.dur.look.s.per.min))    43.4272  1    4.4e-11 ***
+as.vector(scale(sqrt(train.rate.open)))       5.6643  1    0.01731 *  
+as.vector(scale(sqrt(train.rate.curio.min)))  0.7539  1    0.38525    
+as.vector(scale(group.trapped.pig.order))     0.0036  1    0.95209    
+pretrial.open.yn                              0.0691  1    0.79260    
+pothelper.sex                                 1.3206  1    0.25048    
+related                                       3.5712  1    0.05879 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="performance-of-model" class="level2">
+<h2 class="anchored" data-anchor-id="performance-of-model">Performance of model</h2>
+<ul>
+<li><code>performance</code> package used to check model assumptions</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>performance<span class="sc">::</span><span class="fu">check_collinearity</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Check for Multicollinearity
+
+* conditional component:
+
+Low Correlation
+
+                                         Term  VIF    VIF 95% CI Increased SE
+    as.vector(scale(test.dur.look.s.per.min)) 1.07 [1.02,  1.24]         1.03
+      as.vector(scale(sqrt(train.rate.open))) 1.08 [1.03,  1.24]         1.04
+ as.vector(scale(sqrt(train.rate.curio.min))) 1.09 [1.03,  1.24]         1.04
+    as.vector(scale(group.trapped.pig.order)) 1.01 [1.00,  9.91]         1.01
+                             pretrial.open.yn 1.04 [1.00,  1.34]         1.02
+                                pothelper.sex 1.04 [1.00,  1.33]         1.02
+                                      related 1.01 [1.00, 70.98]         1.00
+ Tolerance Tolerance 95% CI
+      0.94     [0.80, 0.98]
+      0.93     [0.81, 0.97]
+      0.92     [0.80, 0.97]
+      0.99     [0.10, 1.00]
+      0.96     [0.75, 1.00]
+      0.96     [0.75, 1.00]
+      0.99     [0.01, 1.00]</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>performance<span class="sc">::</span><span class="fu">check_overdispersion</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Overdispersion test
+
+       dispersion ratio =   0.649
+  Pearson's Chi-Squared = 407.000
+                p-value =       1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>No overdispersion detected.</code></pre>
+</div>
+</div>
+<ul>
+<li><code>DHARMa</code> package used to test for zero-inflation, which compares the distribution of expected zeros from simulations against the observed zeros</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>DHARMa<span class="sc">::</span><span class="fu">testZeroInflation</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="helping-window-time_files/figure-html/perf-3-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    DHARMa zero-inflation test via comparison to expected zeros with
+    simulation under H0 = fitted model
+
+data:  simulationOutput
+ratioObsSim = 0.98311, p-value = 0.208
+alternative hypothesis: two.sided</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="plot" class="level1">
+<h1>Plot</h1>
+<ul>
+<li>fit an additional <strong>plot.model</strong> with all predictors except the predictor of interest (<code>test.dur.look.s.per.min</code>) having a mean of zero</li>
+</ul>
+<section id="dummy-coding" class="level2">
+<h2 class="anchored" data-anchor-id="dummy-coding">Dummy-coding</h2>
+<ul>
+<li>using <code>fastDummies</code> to dummy-code categorical predictors, continuous predictors are z-transformed</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>dat.dum <span class="ot">&lt;-</span> fastDummies<span class="sc">::</span><span class="fu">dummy_cols</span>(dat,</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">select_columns =</span> <span class="fu">c</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"pretrial.open.yn"</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"pothelper.sex"</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"related"</span>),</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">remove_first_dummy =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># categorical, dummy predictors</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="fu">starts_with</span>(<span class="st">"pretrial.open.yn_"</span>)),</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>            <span class="sc">~</span>(.)<span class="sc">-</span><span class="fu">mean</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="fu">starts_with</span>(<span class="st">"pothelper.sex_"</span>)), </span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>            <span class="sc">~</span>(.)<span class="sc">-</span><span class="fu">mean</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="fu">starts_with</span>(<span class="st">"related_"</span>)),</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>            <span class="sc">~</span>(.)<span class="sc">-</span><span class="fu">mean</span>(.))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="run-plot-model" class="level2">
+<h2 class="anchored" data-anchor-id="run-plot-model">Run plot model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># predictor of interest, now per minute</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>dat.dum <span class="ot">&lt;-</span> dat.dum <span class="sc">%&gt;%</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">test.dur.look.s.per.min =</span> test.dur.look.s.per.min<span class="sc">/</span><span class="dv">60</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>plot.mod <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(pot.helper.response <span class="sc">~</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># predictor of interest, now per minute</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                      test.dur.look.s.per.min                     <span class="sc">+</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># scaled continuous predictors</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">as.vector</span>(<span class="fu">scale</span>(<span class="fu">sqrt</span>(train.rate.open)))      <span class="sc">+</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">as.vector</span>(<span class="fu">scale</span>(<span class="fu">sqrt</span>(train.rate.curio.min))) <span class="sc">+</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">as.vector</span>(<span class="fu">scale</span>(group.trapped.pig.order))    <span class="sc">+</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># dummy-coded categorical predictors</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>                      pretrial.open.yn_Yes                    <span class="sc">+</span> </span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>                      pothelper.sex_Male                      <span class="sc">+</span> </span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>                      related_y                               <span class="sc">+</span> </span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># random effects</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>                      (<span class="dv">1</span><span class="sc">|</span>pot.helper.uniq.id),</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Negative binomial distribution</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>                    <span class="at">family =</span> <span class="st">"nbinom2"</span>,</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># expect zero-inflation equal in all obs</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ziformula =</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># data set</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data   =</span> dat.dum,</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># numerical optimizer</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>                    <span class="at">control =</span> contr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="extract-fixed-effects" class="level2">
+<h2 class="anchored" data-anchor-id="extract-fixed-effects">Extract fixed effects</h2>
+<ul>
+<li>create a vector spanning the range of <code>test.dur.look.s.per.min</code></li>
+<li>get fitted/estimated values for negative binomial part and zero-inflated part, with <code>fixef()</code></li>
+<li>as the fitted values are in the logit-link space, they need to be transformed into the space of the measurements</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>coeff.fixed <span class="ot">&lt;-</span> <span class="fu">fixef</span>(plot.mod)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>xvals <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from       =</span> <span class="fu">min</span>(dat.dum<span class="sc">$</span>test.dur.look.s.per.min),</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">to         =</span> <span class="fu">max</span>(dat.dum<span class="sc">$</span>test.dur.look.s.per.min),</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>yvals.nb <span class="ot">&lt;-</span> coeff.fixed<span class="sc">$</span>cond[<span class="st">"(Intercept)"</span>] <span class="sc">+</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  coeff.fixed<span class="sc">$</span>cond[<span class="st">"test.dur.look.s.per.min"</span>]<span class="sc">*</span>xvals</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>yvals.nb <span class="ot">&lt;-</span> <span class="fu">exp</span>(yvals.nb)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>yvals.zi <span class="ot">&lt;-</span> coeff.fixed<span class="sc">$</span>zi[<span class="st">"(Intercept)"</span>]</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>yvals.zi <span class="ot">&lt;-</span> <span class="fu">exp</span>(yvals.zi)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(yvals.zi))</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>yvals <span class="ot">&lt;-</span> (<span class="dv">1</span><span class="sc">-</span>yvals.zi)<span class="sc">*</span>yvals.nb</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>plot.line <span class="ot">&lt;-</span> <span class="fu">tibble</span>(xvals, yvals) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(xvals <span class="sc">&lt;=</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="plot-it" class="level2">
+<h2 class="anchored" data-anchor-id="plot-it">Plot it</h2>
+<ul>
+<li>group by <code>pot.helper.uniq.id</code> and calculate the mean of <code>pot.helper.response</code> (yes/no) and <code>test.dur.look.s.per.min</code> (numeric)</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> dat.dum <span class="sc">%&gt;%</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(pot.helper.uniq.id)<span class="sc">%&gt;%</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean.look.min =</span> <span class="fu">mean</span>(test.dur.look.s.per.min),</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.help     =</span> <span class="fu">mean</span>(pot.helper.response),</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_trials      =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">uniq.group =</span> <span class="fu">str_sub</span>(pot.helper.uniq.id,<span class="dv">1</span>,<span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="fu">aes</span>(<span class="at">x    =</span> mean.look.min, </span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y    =</span> mean.help, </span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">col  =</span> <span class="fu">as.factor</span>(uniq.group),</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>                  <span class="at">size =</span> n_trials),</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha =</span> <span class="fl">0.7</span>,</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> </span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>)) <span class="sc">+</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">viridis</span>(<span class="at">n=</span><span class="dv">8</span>),</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>                     <span class="at">guide=</span><span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> plot.line, </span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x =</span> xvals, </span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>                <span class="at">y =</span> yvals),</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>)) <span class="sc">+</span> </span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.7</span>)) <span class="sc">+</span></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x    =</span> <span class="st">"Proportion of time spent looking in the window"</span>,</span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>       <span class="at">y    =</span> <span class="st">"Proportion of trials pig helps"</span>,</span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>       <span class="at">size =</span> <span class="st">"Number of trials"</span>) <span class="sc">+</span></span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>  my_theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="helping-window-time_files/figure-html/plot-2-1.png" class="img-fluid" width="960"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="how-to-cite-r" class="level1">
+<h1>How to cite R</h1>
+<p>“All analyses were performed using R Statistical Software (version 4.2.0; R Core Team 2022)”.</p>
+<p>Reference: R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+To cite R in publications use:
+
+  R Core Team (2022). R: A language and environment for statistical
+  computing. R Foundation for Statistical Computing, Vienna, Austria.
+  URL https://www.R-project.org/.
+
+Ein BibTeX-Eintrag für LaTeX-Benutzer ist
+
+  @Manual{,
+    title = {R: A Language and Environment for Statistical Computing},
+    author = {{R Core Team}},
+    organization = {R Foundation for Statistical Computing},
+    address = {Vienna, Austria},
+    year = {2022},
+    url = {https://www.R-project.org/},
+  }
+
+We have invested a lot of time and effort in creating R, please cite it
+when using it for data analysis. See also 'citation("pkgname")' for
+citing R packages.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>version<span class="sc">$</span>version.string</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "R version 4.2.0 (2022-04-22 ucrt)"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"tidyverse"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Um Paket 'tidyverse' in Publikationen zu zitieren, nutzen Sie bitte:
+
+  Wickham et al., (2019). Welcome to the tidyverse. Journal of Open
+  Source Software, 4(43), 1686, https://doi.org/10.21105/joss.01686
+
+Ein BibTeX-Eintrag für LaTeX-Benutzer ist
+
+  @Article{,
+    title = {Welcome to the {tidyverse}},
+    author = {Hadley Wickham and Mara Averick and Jennifer Bryan and Winston Chang and Lucy D'Agostino McGowan and Romain François and Garrett Grolemund and Alex Hayes and Lionel Henry and Jim Hester and Max Kuhn and Thomas Lin Pedersen and Evan Miller and Stephan Milton Bache and Kirill Müller and Jeroen Ooms and David Robinson and Dana Paige Seidel and Vitalie Spinu and Kohske Takahashi and Davis Vaughan and Claus Wilke and Kara Woo and Hiroaki Yutani},
+    year = {2019},
+    journal = {Journal of Open Source Software},
+    volume = {4},
+    number = {43},
+    pages = {1686},
+    doi = {10.21105/joss.01686},
+  }</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"viridis"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+To cite viridis/viridisLite in publications use:
+
+  Simon Garnier, Noam Ross, Robert Rudis, Antônio P. Camargo, Marco
+  Sciaini, and Cédric Scherer (2021). Rvision - Colorblind-Friendly
+  Color Maps for R. R package version 0.6.2.
+
+Ein BibTeX-Eintrag für LaTeX-Benutzer ist
+
+  @Manual{,
+    title = {{viridis} - Colorblind-Friendly Color Maps for R},
+    author = {{Garnier} and {Simon} and {Ross} and {Noam} and {Rudis} and {Robert} and {Camargo} and Antônio Pedro and {Sciaini} and {Marco} and {Scherer} and {Cédric}},
+    year = {2021},
+    note = {R package version 0.6.2},
+    url = {https://sjmgarnier.github.io/viridis/},
+    doi = {10.5281/zenodo.4679424},
+    doi = {10.5281/zenodo.4679424},
+  }</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"glmmTMB"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+To cite glmmTMB in publications use:
+
+  Mollie E. Brooks, Kasper Kristensen, Koen J. van Benthem, Arni
+  Magnusson, Casper W. Berg, Anders Nielsen, Hans J. Skaug, Martin
+  Maechler and Benjamin M. Bolker (2017). glmmTMB Balances Speed and
+  Flexibility Among Packages for Zero-inflated Generalized Linear Mixed
+  Modeling. The R Journal, 9(2), 378-400. doi: 10.32614/RJ-2017-066.
+
+Ein BibTeX-Eintrag für LaTeX-Benutzer ist
+
+  @Article{,
+    author = {Mollie E. Brooks and Kasper Kristensen and Koen J. {van Benthem} and Arni Magnusson and Casper W. Berg and Anders Nielsen and Hans J. Skaug and Martin Maechler and Benjamin M. Bolker},
+    title = {{glmmTMB} Balances Speed and Flexibility Among Packages for Zero-inflated Generalized Linear Mixed Modeling},
+    year = {2017},
+    journal = {The R Journal},
+    doi = {10.32614/RJ-2017-066},
+    pages = {378--400},
+    volume = {9},
+    number = {2},
+  }</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"performance"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Um Paket 'performance' in Publikationen zu zitieren, nutzen Sie bitte:
+
+  Lüdecke et al., (2021). performance: An R Package for Assessment,
+  Comparison and Testing of Statistical Models. Journal of Open Source
+  Software, 6(60), 3139. https://doi.org/10.21105/joss.03139
+
+Ein BibTeX-Eintrag für LaTeX-Benutzer ist
+
+  @Article{,
+    title = {{performance}: An {R} Package for Assessment, Comparison and Testing of Statistical Models},
+    author = {Daniel Lüdecke and Mattan S. Ben-Shachar and Indrajeet Patil and Philip Waggoner and Dominique Makowski},
+    year = {2021},
+    journal = {Journal of Open Source Software},
+    volume = {6},
+    number = {60},
+    pages = {3139},
+    doi = {10.21105/joss.03139},
+  }</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"DHARMa"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Um Paket 'DHARMa' in Publikationen zu zitieren, nutzen Sie bitte:
+
+  Hartig F (2022). _DHARMa: Residual Diagnostics for Hierarchical
+  (Multi-Level / Mixed) Regression Models_. R package version 0.4.6,
+  &lt;https://CRAN.R-project.org/package=DHARMa&gt;.
+
+Ein BibTeX-Eintrag für LaTeX-Benutzer ist
+
+  @Manual{,
+    title = {DHARMa: Residual Diagnostics for Hierarchical (Multi-Level / Mixed)
+Regression Models},
+    author = {Florian Hartig},
+    year = {2022},
+    note = {R package version 0.4.6},
+    url = {https://CRAN.R-project.org/package=DHARMa},
+  }</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"fastDummies"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Um Paket 'fastDummies' in Publikationen zu zitieren, nutzen Sie bitte:
+
+  Kaplan J (2020). _fastDummies: Fast Creation of Dummy (Binary)
+  Columns and Rows from Categorical Variables_. R package version
+  1.6.3, &lt;https://CRAN.R-project.org/package=fastDummies&gt;.
+
+Ein BibTeX-Eintrag für LaTeX-Benutzer ist
+
+  @Manual{,
+    title = {fastDummies: Fast Creation of Dummy (Binary) Columns and Rows from
+Categorical Variables},
+    author = {Jacob Kaplan},
+    year = {2020},
+    note = {R package version 1.6.3},
+    url = {https://CRAN.R-project.org/package=fastDummies},
+  }</code></pre>
+</div>
+</div>
+</section>
+<section id="session-info" class="level1">
+<h1>Session Info</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.2.0 (2022-04-22 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19045)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=German_Germany.utf8  LC_CTYPE=German_Germany.utf8   
+[3] LC_MONETARY=German_Germany.utf8 LC_NUMERIC=C                   
+[5] LC_TIME=German_Germany.utf8    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] fastDummies_1.6.3 DHARMa_0.4.6      performance_0.9.2 glmmTMB_1.1.5    
+ [5] viridis_0.6.2     viridisLite_0.4.1 forcats_0.5.1     stringr_1.4.0    
+ [9] dplyr_1.0.9       purrr_0.3.4       readr_2.1.2       tidyr_1.2.0      
+[13] tibble_3.1.7      ggplot2_3.3.6     tidyverse_1.3.1  
+
+loaded via a namespace (and not attached):
+ [1] nlme_3.1-157        fs_1.5.2            bit64_4.0.5        
+ [4] lubridate_1.8.0     insight_0.18.4      httr_1.4.4         
+ [7] numDeriv_2016.8-1.1 tools_4.2.0         TMB_1.9.1          
+[10] backports_1.4.1     utf8_1.2.2          R6_2.5.1           
+[13] DBI_1.1.3           colorspace_2.0-3    withr_2.5.0        
+[16] tidyselect_1.1.2    gridExtra_2.3       emmeans_1.8.1-1    
+[19] bit_4.0.4           compiler_4.2.0      cli_3.3.0          
+[22] rvest_1.0.3         xml2_1.3.3          sandwich_3.0-2     
+[25] labeling_0.4.2      scales_1.2.1        mvtnorm_1.1-3      
+[28] digest_0.6.29       minqa_1.2.4         rmarkdown_2.16     
+[31] pkgconfig_2.0.3     htmltools_0.5.2     lme4_1.1-30        
+[34] dbplyr_2.2.1        fastmap_1.1.0       htmlwidgets_1.5.4  
+[37] rlang_1.0.6         readxl_1.4.0        rstudioapi_0.14    
+[40] farver_2.1.0        generics_0.1.3      zoo_1.8-10         
+[43] jsonlite_1.8.0      vroom_1.5.7         car_3.1-0          
+[46] magrittr_2.0.3      Matrix_1.5-3        Rcpp_1.0.8.3       
+[49] munsell_0.5.0       fansi_1.0.3         abind_1.4-5        
+[52] lifecycle_1.0.2     stringi_1.7.6       multcomp_1.4-20    
+[55] yaml_2.3.5          carData_3.0-5       MASS_7.3-58        
+[58] grid_4.2.0          parallel_4.2.0      crayon_1.5.1       
+[61] lattice_0.20-45     haven_2.5.0         splines_4.2.0      
+[64] hms_1.1.2           knitr_1.40          pillar_1.8.1       
+[67] boot_1.3-28         estimability_1.4.1  codetools_0.2-18   
+[70] reprex_2.0.2        glue_1.6.2          evaluate_0.16      
+[73] data.table_1.14.2   modelr_0.1.9        vctrs_0.4.1        
+[76] nloptr_2.0.3        tzdb_0.3.0          cellranger_1.1.0   
+[79] gtable_0.3.1        datawizard_0.6.1    assertthat_0.2.1   
+[82] xfun_0.31           xtable_1.8-4        broom_1.0.1        
+[85] coda_0.19-4         survival_3.3-1      TH.data_1.1-1      
+[88] ellipsis_0.3.2     </code></pre>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

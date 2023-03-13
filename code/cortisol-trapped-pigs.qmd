@@ -1,0 +1,217 @@
+---
+title: "Cortisol in trapped pigs"
+author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
+date: "`r Sys.Date()`" 
+editor: visual
+code-fold: false
+toc: true
+format: html
+---
+
+# Libraries
+
+```{r, libraries, warning=FALSE, message=FALSE, echo=TRUE}
+library(tidyverse)     # tidy universe
+library(lmerTest)      # as lme4, but with p-values
+library(emmeans)       # estimated marginal means + post-hoc
+library(performance)   # model performance
+library(ggpubr)        # special ggplots, here ggpaired
+```
+
+```{r, my_theme, echo = FALSE}
+my_theme = theme_classic() +
+  theme(axis.title = element_text(face="bold", size=14),
+        axis.text  = element_text(size=12, angle = 0, vjust = 0.5),
+        plot.title = element_text(face="bold", size=14),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+```
+
+```{r, seed}
+set.seed(1989)
+```
+
+# Data
+
+Analysis of cortisol concentration and behavior data of 70 pigs in two contexts ("pre" and "post").
+
+## Read data
+
+```{r, data, warning = FALSE}
+dat <- read_csv("../data/cortisol-trapped-pigs.csv")
+```
+
+## Adjust data types
+
+```{r, data-adj}
+dat <- dat %>% 
+  # make factors
+  mutate_at(vars(sow,
+                 context,
+                 sex), ~as.factor(.)) %>% 
+  mutate(group.test.order.z              = as.vector(scale(group.test.order))) %>% 
+  mutate(distress.rate.sq.z              = as.vector(scale(sqrt(distress.rate)))) %>% 
+  mutate(invest.window.rate.per.min.sq.z = as.vector(scale(sqrt(invest.window.rate.per.min)))) %>% 
+  mutate(dur.separated.min.z             = as.vector(scale(dur.separated.min))) %>% 
+  mutate(lat.helped.min.log.z            = as.vector(scale(log(lat.helped.min)))) %>% 
+  mutate(sample.time.hr.z                = as.vector(scale(sample.time.hr)))
+  
+str(dat)
+```
+
+# Linear mixed model
+
+## Run full model
+
+```{r, model-contr}
+contr = lmerControl(optCtrl = list(maxfun = 10000000), calc.derivs = FALSE)
+```
+
+-   full model with test and control predictors
+
+```{r, model-full}
+mod <- lmerTest::lmer(sqrt(cort) ~ 
+                        # test predictors
+                        context*distress.rate.sq.z              + 
+                        context*invest.window.rate.per.min.sq.z + 
+                        context*dur.separated.min.z             + 
+                        context*lat.helped.min.log.z            +  
+                        # control predictors
+                        sex + 
+                        group.test.order.z + 
+                        sample.time.hr.z + 
+                        # random/nested factors
+                        (1|trapped.uniq.id) + 
+                        (1|trapped.date),
+                      # data set
+                      data    = dat,
+                      REML    = TRUE,
+                      # numerical optimizer
+                      control = contr)
+```
+
+## Run reduced model
+
+```{r, model-reduced}
+mod.red <- lmerTest::lmer(sqrt(cort) ~ 
+                          # no test predictors
+                          # control predictors
+                          sex + 
+                          group.test.order.z + 
+                          sample.time.hr.z + 
+                          # random/nested factors
+                          (1|trapped.uniq.id) + 
+                          (1|trapped.date),
+                        # data set
+                        data    = dat,
+                        REML    = TRUE,
+                        # numerical optimizer
+                        control = contr)
+```
+
+## Model comparison
+
+```{r, model-comp}
+anova(update(mod.red, REML = FALSE), update(mod, REML = FALSE), test = "Chisq")
+```
+
+## Summary of model
+
+-   only factor `context` and its interaction with `distress.rate.sq.z` has a significant effect
+
+```{r, model-summary}
+summary(mod)
+```
+
+-   with `car::Anova()` we calculate Deviance table and $\chi^2$ and $F$ statistic, type III because of significant interactions
+
+```{r, model-table}
+car::Anova(mod, type ="III", test.statistic = "Chisq")
+car::Anova(mod, type ="III", test.statistic = "F")
+```
+
+## Performance of model
+
+-   `performance` package used to check model assumptions
+
+```{r, model-perf, fig.height=10, fig.width=10, warning=FALSE}
+performance::check_model(mod)
+```
+
+# Estimated Marginal Means and multiple comparisons
+
+-   `emmeans` package to obtain the estimated marginal means (EMMs) for `context`, as back-transformed estimates
+
+```{r, emmeans}
+emm <- emmeans(mod, 
+               specs  = pairwise ~ context,
+               type   = "response",
+               adjust = "tukey")
+
+emm$emmeans
+
+emm$contrasts
+```
+
+# Plot
+
+```{r, plot-1}
+dat.plot <- dat %>% 
+  select(trapped.uniq.id, context, cort, distressrate.cat) %>% 
+  pivot_wider(names_from = "context", 
+              names_prefix = "cort.",
+              values_from = "cort")
+```
+
+```{r, plot-2}
+plot <- dat.plot %>% 
+  ggpaired(cond1="cort.pre", 
+           cond2="cort.post",
+           color="condition", 
+           palette=c("#E6A0C4","#C51B7D"),
+           line.color="gray",
+           line.size=0.3,
+           legend="none",
+           point.size=3, 
+           ylab="Cortisol (ng/mL)", 
+           xlab="Sample context",
+           facet.by="distressrate.cat") + 
+  scale_x_discrete(labels=c("pre-trapped","post-trapped")) +
+  scale_y_continuous(breaks=seq(0,12,by=2)) + 
+  facet_wrap(~distressrate.cat, 
+             labeller= labeller(distressrate.cat = 
+                                  c("<1 min" = "Fewer distress signals", 
+                                    ">1 min" = "More distress signals"))) +
+  my_theme +
+  theme(strip.text = element_text(size = 14),
+        legend.position = "none")
+```
+
+```{r, plot-3, fig.height=10, fig.width=10, warning=FALSE}
+plot
+```
+
+# How to cite R
+
+"All analyses were performed using R Statistical Software (version 4.2.0; R Core Team 2022)".
+
+Reference: R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+```{r, cite-r}
+citation()
+version$version.string
+```
+
+```{r, cite-packages}
+citation("tidyverse")
+citation("lmerTest")
+citation("emmeans")
+citation("performance")
+citation("ggpubr")
+```
+
+# Session Info
+
+```{r, session}
+sessionInfo()
+```

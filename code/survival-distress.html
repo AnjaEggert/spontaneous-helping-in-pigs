@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Liza Moscovice, Anja Eggert and Jean-Loup Rault">
+<meta name="dcterms.date" content="2023-03-13">
+
+<title>Probability to be helped over time</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="survival-distress_files/libs/clipboard/clipboard.min.js"></script>
+<script src="survival-distress_files/libs/quarto-html/quarto.js"></script>
+<script src="survival-distress_files/libs/quarto-html/popper.min.js"></script>
+<script src="survival-distress_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="survival-distress_files/libs/quarto-html/anchor.min.js"></script>
+<link href="survival-distress_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="survival-distress_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="survival-distress_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="survival-distress_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="survival-distress_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#libraries" id="toc-libraries" class="nav-link active" data-scroll-target="#libraries">Libraries</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a>
+  <ul class="collapse">
+  <li><a href="#read-data" id="toc-read-data" class="nav-link" data-scroll-target="#read-data">Read data</a></li>
+  <li><a href="#adjust-data-types" id="toc-adjust-data-types" class="nav-link" data-scroll-target="#adjust-data-types">Adjust data types</a></li>
+  </ul></li>
+  <li><a href="#define-survival-object" id="toc-define-survival-object" class="nav-link" data-scroll-target="#define-survival-object">Define survival object</a></li>
+  <li><a href="#cox-proportional-hazards-model" id="toc-cox-proportional-hazards-model" class="nav-link" data-scroll-target="#cox-proportional-hazards-model">Cox proportional hazards model</a>
+  <ul class="collapse">
+  <li><a href="#run-full-model" id="toc-run-full-model" class="nav-link" data-scroll-target="#run-full-model">Run full model</a></li>
+  <li><a href="#run-reduced-model" id="toc-run-reduced-model" class="nav-link" data-scroll-target="#run-reduced-model">Run reduced model</a></li>
+  <li><a href="#model-comparison" id="toc-model-comparison" class="nav-link" data-scroll-target="#model-comparison">Model comparison</a></li>
+  <li><a href="#testing-proportional-hazards-assumption" id="toc-testing-proportional-hazards-assumption" class="nav-link" data-scroll-target="#testing-proportional-hazards-assumption">Testing Proportional Hazards Assumption</a></li>
+  <li><a href="#testing-influential-observations" id="toc-testing-influential-observations" class="nav-link" data-scroll-target="#testing-influential-observations">Testing Influential Observations</a></li>
+  </ul></li>
+  <li><a href="#analysis-of-deviance-table" id="toc-analysis-of-deviance-table" class="nav-link" data-scroll-target="#analysis-of-deviance-table">Analysis of Deviance Table</a></li>
+  <li><a href="#hazard-ratios" id="toc-hazard-ratios" class="nav-link" data-scroll-target="#hazard-ratios">Hazard ratios</a></li>
+  <li><a href="#survival-curves" id="toc-survival-curves" class="nav-link" data-scroll-target="#survival-curves">Survival curves</a>
+  <ul class="collapse">
+  <li><a href="#dummy-coding" id="toc-dummy-coding" class="nav-link" data-scroll-target="#dummy-coding">Dummy-coding</a></li>
+  <li><a href="#run-plot-model" id="toc-run-plot-model" class="nav-link" data-scroll-target="#run-plot-model">Run plot model</a></li>
+  <li><a href="#draw-survival-curve" id="toc-draw-survival-curve" class="nav-link" data-scroll-target="#draw-survival-curve">Draw survival curve</a></li>
+  </ul></li>
+  <li><a href="#how-to-cite-r" id="toc-how-to-cite-r" class="nav-link" data-scroll-target="#how-to-cite-r">How to cite R</a></li>
+  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info">Session Info</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Probability to be helped over time</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Liza Moscovice, Anja Eggert and Jean-Loup Rault </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 13, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="libraries" class="level1">
+<h1>Libraries</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)     <span class="co"># tidy universe</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fastDummies)   <span class="co"># create dummy coded factors</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survival)      <span class="co"># create survival object and survival curves</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survminer)     <span class="co"># model diagnostics</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest)        <span class="co"># lrtest() model comparison</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1989</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data" class="level1">
+<h1>Data</h1>
+<p>Using survival analysis to analyse time to open door of trapped pigs. Data set contains time-resolved data of 58 trapped pigs.</p>
+<section id="read-data" class="level2">
+<h2 class="anchored" data-anchor-id="read-data">Read data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../data/survival-distress.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 345 Columns: 36
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (9): trapped.pig.uniq.id, sex, location.test.box, next.min.status, outc...
+dbl (27): sow, group.trapped.pig.order, interval_count, interval.dur, number...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+</section>
+<section id="adjust-data-types" class="level2">
+<h2 class="anchored" data-anchor-id="adjust-data-types">Adjust data types</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># make factors</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(distress.binom,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                 sex,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                 location.test.box,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                 uniq.group,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                 trapped.pig.uniq.id), <span class="sc">~</span><span class="fu">as.factor</span>(.)) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">invest.window.sq.z        =</span> <span class="fu">as.vector</span>(<span class="fu">scale</span>(<span class="fu">sqrt</span>(invest.window)))) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time.trial.begins.z       =</span> <span class="fu">as.vector</span>(<span class="fu">scale</span>(time.trial.begins))) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">group.trapped.pig.order.z =</span> <span class="fu">as.vector</span>(<span class="fu">scale</span>(group.trapped.pig.order)))</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [345 × 36] (S3: tbl_df/tbl/data.frame)
+ $ trapped.pig.uniq.id      : Factor w/ 58 levels "DG2_F_2","DG2_F_3",..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ sow                      : num [1:345] 6232 6232 6232 6232 6232 ...
+ $ sex                      : Factor w/ 2 levels "Female","Male": 1 1 1 1 1 1 1 1 1 1 ...
+ $ group.trapped.pig.order  : num [1:345] 3 3 3 3 3 3 3 3 3 3 ...
+ $ location.test.box        : Factor w/ 2 levels "Front","Side": 1 1 1 1 1 1 1 1 1 1 ...
+ $ interval_count           : num [1:345] 1 2 3 4 5 6 7 8 9 10 ...
+ $ interval.dur             : num [1:345] 60 60 60 60 60 60 60 60 60 60 ...
+ $ number.of.intervals      : num [1:345] 12 12 12 12 12 12 12 12 12 12 ...
+ $ next.min.status          : chr [1:345] "trapped" "trapped" "trapped" "trapped" ...
+ $ screams.binom            : num [1:345] 0 0 0 0 0 0 0 0 0 0 ...
+ $ escape.binom             : num [1:345] 0 0 0 0 0 0 0 0 0 0 ...
+ $ door.binom               : num [1:345] 0 1 0 0 1 0 0 0 0 0 ...
+ $ window.binom             : num [1:345] 1 1 0 0 1 1 0 0 0 0 ...
+ $ screams                  : num [1:345] 0 0 0 0 0 0 0 0 0 0 ...
+ $ escapes                  : num [1:345] 0 0 0 0 0 0 0 0 0 0 ...
+ $ invest.door              : num [1:345] 0 2 0 0 1 0 0 0 0 0 ...
+ $ invest.window            : num [1:345] 4 5 0 0 1 1 0 0 0 0 ...
+ $ outcome1                 : chr [1:345] "Helped" "Helped" "Helped" "Helped" ...
+ $ outcome2                 : chr [1:345] "Full_trial" "Full_trial" "Full_trial" "Full_trial" ...
+ $ lat.helped.min           : num [1:345] 11.6 11.6 11.6 11.6 11.6 ...
+ $ trapped.date             : chr [1:345] "08.09.20" "08.09.20" "08.09.20" "08.09.20" ...
+ $ uniq.group               : Factor w/ 8 levels "Batch1_A","Batch1_B",..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ time.trial.begins        : num [1:345] 12.5 12.5 12.5 12.5 12.5 ...
+ $ change.cort              : num [1:345] NA NA NA NA NA NA NA NA NA NA ...
+ $ time.post.sample         : num [1:345] NA NA NA NA NA NA NA NA NA NA ...
+ $ interval_time            : chr [1:345] "56.92-116.92" "116.92-176.92" "176.92-236.92" "236.92-296.92" ...
+ $ stremodo                 : num [1:345] 0 0 1 0 0 0 1 1 1 4 ...
+ $ distress.num             : num [1:345] 0 0 0 0 0 0 0 0 0 0 ...
+ $ distress.binom           : Factor w/ 2 levels "0","1": 1 1 1 1 1 1 1 1 1 1 ...
+ $ distress.wstrem.num      : num [1:345] 0 0 1 0 0 0 1 1 1 4 ...
+ $ distress.wstrem.binom    : num [1:345] 0 0 1 0 0 0 1 1 1 1 ...
+ $ invest.window.sq.z       : num [1:345] 1.0475 1.2999 -1.0901 -1.0901 -0.0213 ...
+ $ time.trial.begins.z      : num [1:345] 0.426 0.426 0.426 0.426 0.426 ...
+ $ group.trapped.pig.order.z: num [1:345] -0.572 -0.572 -0.572 -0.572 -0.572 ...
+ $ tstop                    : num [1:345] 1 2 3 4 5 6 7 8 9 10 ...
+ $ tstart                   : num [1:345] 0 1 2 3 4 5 6 7 8 9 ...</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="define-survival-object" class="level1">
+<h1>Define survival object</h1>
+<ul>
+<li>create <code>tstart</code> and <code>tstop</code> columns to define a time-varying survival object</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trapped.pig.uniq.id) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tstop  =</span> interval_count) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tstart =</span> interval_count<span class="dv">-1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>maximum duration of the tests was 20 minutes, <em>i.e.</em> if time to release trapped pigs <code>lat.helped.min</code> = 20 (or the aborted trial) we have <em>right censored data</em></li>
+<li>create <code>event</code> column, <code>event = 1</code> if <code>lat.helped.min</code> &lt; 20 (pigs were helped within the test period), all others have <code>event = 0</code>, i.e.&nbsp;those were not helped within the test period.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">event =</span> 0L) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trapped.pig.uniq.id) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># last obs for each pig = 1</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">event =</span> <span class="fu">case_when</span>(outcome2 <span class="sc">==</span> <span class="st">"Full_trial"</span> <span class="sc">&amp;</span> </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                           lat.helped.min <span class="sc">&lt;</span> <span class="dv">20</span> <span class="sc">~</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">replace</span>(event,<span class="fu">n</span>(), 1L),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                           <span class="cn">TRUE</span> <span class="sc">~</span> 0L)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(trapped.pig.uniq.id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>check correct definition of the survival object using <code>survival::Surv()</code>, a <code>"+"</code> indicates right censoring (<em>i.e.</em>, not helped within 20 minutes or aborted trial).</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(dat, survival<span class="sc">::</span><span class="fu">Surv</span>(tstart, tstop, event))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4+] ( 4, 5+] ( 5, 6+] ( 6, 7+] ( 7, 8+]
+  [9] ( 8, 9+] ( 9,10+] (10,11]  ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4+] ( 4, 5+]
+ [17] ( 5, 6+] ( 6, 7+] ( 7, 8+] ( 8, 9+] ( 9,10+] (10,11+] (11,12+] (12,13+]
+ [25] (13,14+] (14,15+] (15,16+] (16,17+] (17,18+] (18,19+] ( 0, 1+] ( 1, 2+]
+ [33] ( 2, 3]  ( 0, 1]  ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4+] ( 4, 5+] ( 5, 6+]
+ [41] ( 6, 7+] ( 7, 8+] ( 8, 9+] ( 9,10+] (10,11+] (11,12+] (12,13+] (13,14+]
+ [49] (14,15+] (15,16+] (16,17+] (17,18+] (18,19+] ( 0, 1+] ( 1, 2+] ( 2, 3+]
+ [57] ( 3, 4+] ( 4, 5+] ( 5, 6+] ( 6, 7+] ( 7, 8+] ( 8, 9+] ( 9,10+] (10,11+]
+ [65] (11,12+] (12,13+] (13,14+] (14,15+] (15,16+] (16,17+] (17,18+] (18,19+]
+ [73] ( 0, 1]  ( 0, 1+] ( 1, 2+] ( 2, 3]  ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4] 
+ [81] ( 0, 1]  ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4+] ( 4, 5+] ( 5, 6+] ( 6, 7+]
+ [89] ( 7, 8+] ( 8, 9+] ( 9,10+] (10,11+] (11,12+] (12,13+] (13,14+] (14,15+]
+ [97] (15,16+] (16,17+] (17,18+] (18,19+] ( 0, 1]  ( 0, 1+] ( 1, 2+] ( 2, 3+]
+[105] ( 3, 4+] ( 4, 5+] ( 5, 6+] ( 6, 7+] ( 7, 8+] ( 8, 9+] ( 9,10+] (10,11+]
+[113] (11,12+] (12,13]  ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 0, 1]  ( 0, 1+] ( 1, 2+]
+[121] ( 2, 3+] ( 3, 4]  ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4+] ( 4, 5+] ( 5, 6+]
+[129] ( 6, 7+] ( 7, 8+] ( 8, 9+] ( 9,10]  ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4+]
+[137] ( 4, 5+] ( 5, 6+] ( 6, 7+] ( 7, 8+] ( 8, 9+] ( 9,10+] (10,11+] (11,12+]
+[145] (12,13+] (13,14+] (14,15+] (15,16+] (16,17+] (17,18+] (18,19+] ( 0, 1] 
+[153] ( 0, 1+] ( 1, 2]  ( 0, 1+] ( 1, 2+] ( 2, 3]  ( 0, 1+] ( 1, 2]  ( 0, 1] 
+[161] ( 0, 1+] ( 1, 2]  ( 0, 1]  ( 0, 1+] ( 1, 2]  ( 0, 1+] ( 1, 2]  ( 0, 1+]
+[169] ( 1, 2]  ( 0, 1]  ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4+] ( 4, 5]  ( 0, 1+]
+[177] ( 1, 2+] ( 2, 3+] ( 3, 4]  ( 0, 1]  ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4+]
+[185] ( 4, 5+] ( 5, 6+] ( 6, 7+] ( 7, 8+] ( 8, 9+] ( 9,10+] (10,11+] (11,12+]
+[193] (12,13+] (13,14+] (14,15+] (15,16+] (16,17+] (17,18+] (18,19+] ( 0, 1+]
+[201] ( 1, 2+] ( 2, 3+] ( 3, 4+] ( 4, 5+] ( 5, 6+] ( 6, 7+] ( 7, 8+] ( 8, 9+]
+[209] ( 9,10+] (10,11+] (11,12+] (12,13+] (13,14+] (14,15+] (15,16+] (16,17+]
+[217] (17,18+] (18,19+] ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4+] ( 4, 5+] ( 5, 6+]
+[225] ( 6, 7]  ( 0, 1]  ( 0, 1]  ( 0, 1+] ( 1, 2]  ( 0, 1+] ( 1, 2+] ( 2, 3] 
+[233] ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4+] ( 4, 5+] ( 5, 6+] ( 6, 7+] ( 7, 8+]
+[241] ( 8, 9+] ( 9,10+] (10,11]  ( 0, 1+] ( 1, 2]  ( 0, 1+] ( 1, 2+] ( 2, 3+]
+[249] ( 3, 4+] ( 4, 5+] ( 5, 6+] ( 6, 7+] ( 7, 8+] ( 8, 9+] ( 9,10+] (10,11+]
+[257] (11,12+] (12,13+] (13,14+] (14,15+] (15,16]  ( 0, 1]  ( 0, 1+] ( 1, 2+]
+[265] ( 2, 3+] ( 3, 4+] ( 4, 5+] ( 5, 6+] ( 6, 7+] ( 7, 8+] ( 8, 9+] ( 9,10+]
+[273] (10,11+] (11,12+] (12,13+] (13,14+] (14,15+] (15,16+] (16,17+] (17,18+]
+[281] (18,19+] ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4+] ( 4, 5+] ( 5, 6]  ( 0, 1+]
+[289] ( 1, 2]  ( 0, 1]  ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4]  ( 0, 1+] ( 1, 2] 
+[297] ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4+] ( 4, 5+] ( 5, 6+] ( 6, 7+] ( 7, 8+]
+[305] ( 8, 9+] ( 9,10+] (10,11+] (11,12+] (12,13+] (13,14+] (14,15+] (15,16+]
+[313] (16,17+] (17,18+] (18,19+] ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4]  ( 0, 1+]
+[321] ( 1, 2+] ( 2, 3+] ( 3, 4+] ( 4, 5+] ( 5, 6]  ( 0, 1+] ( 1, 2+] ( 2, 3+]
+[329] ( 3, 4]  ( 0, 1+] ( 1, 2+] ( 2, 3+] ( 3, 4+] ( 4, 5+] ( 5, 6+] ( 6, 7+]
+[337] ( 7, 8+] ( 8, 9+] ( 9,10+] (10,11]  ( 0, 1]  ( 0, 1]  ( 0, 1]  ( 0, 1+]
+[345] ( 1, 2] </code></pre>
+</div>
+</div>
+</section>
+<section id="cox-proportional-hazards-model" class="level1">
+<h1>Cox proportional hazards model</h1>
+<ul>
+<li>run a Cox proportional hazards model (<em>Cox PH model</em> or sometimes Cox PH regression) with time-dependent covariates</li>
+</ul>
+<section id="run-full-model" class="level2">
+<h2 class="anchored" data-anchor-id="run-full-model">Run full model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> survival<span class="sc">::</span><span class="fu">coxph</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  survival<span class="sc">::</span><span class="fu">Surv</span>(tstart, tstop, event) <span class="sc">~</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># test predictors</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    distress.binom            <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    invest.window.sq.z        <span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># control predictors</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    sex                       <span class="sc">+</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    time.trial.begins.z       <span class="sc">+</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    location.test.box         <span class="sc">+</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    group.trapped.pig.order.z <span class="sc">+</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    uniq.group,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dat,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster =</span> trapped.pig.uniq.id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="run-reduced-model" class="level2">
+<h2 class="anchored" data-anchor-id="run-reduced-model">Run reduced model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mod.red <span class="ot">&lt;-</span> survival<span class="sc">::</span><span class="fu">coxph</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  survival<span class="sc">::</span><span class="fu">Surv</span>(tstart, tstop, event) <span class="sc">~</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># test predictors: none</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># control predictors</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    sex                       <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    time.trial.begins.z       <span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    location.test.box         <span class="sc">+</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    group.trapped.pig.order.z <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    uniq.group,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dat,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster =</span> trapped.pig.uniq.id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="model-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="model-comparison">Model comparison</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">lrtest</span>(mod.red, mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Likelihood ratio test
+
+Model 1: survival::Surv(tstart, tstop, event) ~ sex + time.trial.begins.z + 
+    location.test.box + group.trapped.pig.order.z + uniq.group
+Model 2: survival::Surv(tstart, tstop, event) ~ distress.binom + invest.window.sq.z + 
+    sex + time.trial.begins.z + location.test.box + group.trapped.pig.order.z + 
+    uniq.group
+  #Df  LogLik Df  Chisq Pr(&gt;Chisq)  
+1  11 -158.88                       
+2  13 -156.49  2 4.7993    0.09075 .
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="testing-proportional-hazards-assumption" class="level2">
+<h2 class="anchored" data-anchor-id="testing-proportional-hazards-assumption">Testing Proportional Hazards Assumption</h2>
+<ul>
+<li>testing proportional hazards (PH) assumption using graphical diagnostics based on the scaled Schoenfeld residuals</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>survminer<span class="sc">::</span><span class="fu">ggcoxzph</span>(<span class="fu">cox.zph</span>(mod))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="survival-distress_files/figure-html/model-ph-1.png" class="img-fluid" width="960"></p>
+</div>
+</div>
+</section>
+<section id="testing-influential-observations" class="level2">
+<h2 class="anchored" data-anchor-id="testing-influential-observations">Testing Influential Observations</h2>
+<ul>
+<li>testing for influential observations or outliers using graphical diagnostics of the deviance residuals</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>survminer<span class="sc">::</span><span class="fu">ggcoxdiagnostics</span>(mod, <span class="at">type =</span> <span class="st">"deviance"</span>,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">linear.predictions =</span> <span class="cn">FALSE</span>, <span class="at">ggtheme =</span> my_theme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="survival-distress_files/figure-html/model-outl-1.png" class="img-fluid" width="576"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="analysis-of-deviance-table" class="level1">
+<h1>Analysis of Deviance Table</h1>
+<ul>
+<li>with <code>car::Anova()</code> we calculate deviance table and <span class="math inline">\(Wald\)</span> statistic, type II because of no interactions</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(mod, <span class="at">type =</span><span class="st">"II"</span>, <span class="at">test.statistic =</span> <span class="st">"Wald"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table (Type II tests)
+
+Response: survival::Surv(tstart, tstop, event)
+                          Df   Chisq Pr(&gt;Chisq)  
+distress.binom             1  4.6505    0.03104 *
+invest.window.sq.z         1  0.8094    0.36829  
+sex                        1  0.0276    0.86817  
+time.trial.begins.z        1  0.0427    0.83628  
+location.test.box          1  1.3696    0.24188  
+group.trapped.pig.order.z  1  0.9056    0.34129  
+uniq.group                 7 16.2565    0.02287 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="hazard-ratios" class="level1">
+<h1>Hazard ratios</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+survival::coxph(formula = survival::Surv(tstart, tstop, event) ~ 
+    distress.binom + invest.window.sq.z + sex + time.trial.begins.z + 
+        location.test.box + group.trapped.pig.order.z + uniq.group, 
+    data = dat, cluster = trapped.pig.uniq.id)
+
+  n= 345, number of events= 48 
+
+                              coef exp(coef) se(coef) robust se      z Pr(&gt;|z|)
+distress.binom1            0.86149   2.36668  0.41076   0.39948  2.156   0.0310
+invest.window.sq.z        -0.17903   0.83608  0.22499   0.19899 -0.900   0.3683
+sexMale                   -0.05416   0.94728  0.34216   0.32628 -0.166   0.8682
+time.trial.begins.z        0.02931   1.02975  0.15980   0.14186  0.207   0.8363
+location.test.boxSide      0.39256   1.48077  0.34262   0.33544  1.170   0.2419
+group.trapped.pig.order.z  0.15229   1.16450  0.16160   0.16003  0.952   0.3413
+uniq.groupBatch1_B         1.46168   4.31320  0.91796   0.79582  1.837   0.0663
+uniq.groupBatch2_A        -0.14421   0.86570  0.66736   0.72302 -0.199   0.8419
+uniq.groupBatch2_B         1.00209   2.72398  0.62280   0.65190  1.537   0.1242
+uniq.groupBatch3_A         0.50940   1.66429  0.64097   0.68782  0.741   0.4589
+uniq.groupBatch3_B         0.72526   2.06527  0.60601   0.62339  1.163   0.2447
+uniq.groupBatch4_A        -0.03556   0.96506  0.62055   0.66948 -0.053   0.9576
+uniq.groupBatch4_B         1.32897   3.77716  0.64840   0.60352  2.202   0.0277
+                           
+distress.binom1           *
+invest.window.sq.z         
+sexMale                    
+time.trial.begins.z        
+location.test.boxSide      
+group.trapped.pig.order.z  
+uniq.groupBatch1_B        .
+uniq.groupBatch2_A         
+uniq.groupBatch2_B         
+uniq.groupBatch3_A         
+uniq.groupBatch3_B         
+uniq.groupBatch4_A         
+uniq.groupBatch4_B        *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+                          exp(coef) exp(-coef) lower .95 upper .95
+distress.binom1              2.3667     0.4225    1.0817     5.178
+invest.window.sq.z           0.8361     1.1961    0.5661     1.235
+sexMale                      0.9473     1.0557    0.4997     1.796
+time.trial.begins.z          1.0297     0.9711    0.7798     1.360
+location.test.boxSide        1.4808     0.6753    0.7673     2.858
+group.trapped.pig.order.z    1.1645     0.8587    0.8510     1.594
+uniq.groupBatch1_B           4.3132     0.2318    0.9066    20.521
+uniq.groupBatch2_A           0.8657     1.1551    0.2099     3.571
+uniq.groupBatch2_B           2.7240     0.3671    0.7591     9.775
+uniq.groupBatch3_A           1.6643     0.6009    0.4323     6.408
+uniq.groupBatch3_B           2.0653     0.4842    0.6086     7.008
+uniq.groupBatch4_A           0.9651     1.0362    0.2598     3.584
+uniq.groupBatch4_B           3.7772     0.2647    1.1573    12.328
+
+Concordance= 0.685  (se = 0.041 )
+Likelihood ratio test= 15.82  on 13 df,   p=0.3
+Wald test            = 28.8  on 13 df,   p=0.007
+Score (logrank) test = 15.25  on 13 df,   p=0.3,   Robust = 20.99  p=0.07
+
+  (Note: the likelihood ratio and score tests assume independence of
+     observations within a cluster, the Wald and robust score tests do not).</code></pre>
+</div>
+</div>
+</section>
+<section id="survival-curves" class="level1">
+<h1>Survival curves</h1>
+<ul>
+<li>fit an additional <strong>plot.model</strong> with all predictors except the predictor of interest (<code>distress.binom</code>) having a mean of zero</li>
+</ul>
+<section id="dummy-coding" class="level2">
+<h2 class="anchored" data-anchor-id="dummy-coding">Dummy-coding</h2>
+<ul>
+<li>using <code>fastDummies</code> to dummy-code categorical predictors, continuous predictors are z-transformed</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>dat.distress <span class="ot">&lt;-</span> fastDummies<span class="sc">::</span><span class="fu">dummy_cols</span>(dat,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">select_columns =</span> <span class="fu">c</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"sex"</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"uniq.group"</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"location.test.box"</span>),</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">remove_first_dummy =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="fu">starts_with</span>(<span class="st">"sex_"</span>)), </span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>            <span class="sc">~</span>(.)<span class="sc">-</span><span class="fu">mean</span>(.)) <span class="sc">%&gt;%</span> </span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="fu">starts_with</span>(<span class="st">"uniq.group_"</span>)), </span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>            <span class="sc">~</span>(.)<span class="sc">-</span><span class="fu">mean</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="fu">starts_with</span>(<span class="st">"location.test.box_"</span>)),</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>            <span class="sc">~</span>(.)<span class="sc">-</span><span class="fu">mean</span>(.))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="run-plot-model" class="level2">
+<h2 class="anchored" data-anchor-id="run-plot-model">Run plot model</h2>
+<ul>
+<li>estimate two survival curves for <code>distress.binom</code>, <em>i.e.</em> distress yes/no</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>plot.mod <span class="ot">&lt;-</span> survival<span class="sc">::</span><span class="fu">coxph</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  survival<span class="sc">::</span><span class="fu">Surv</span>(tstart, tstop, event) <span class="sc">~</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># strata distress</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">strata</span>(distress.binom) <span class="sc">+</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sex</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    sex_Male <span class="sc">+</span>   </span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># uniq.group</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    uniq.group_Batch1_B <span class="sc">+</span> </span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    uniq.group_Batch2_A <span class="sc">+</span> uniq.group_Batch2_B <span class="sc">+</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    uniq.group_Batch3_A <span class="sc">+</span> uniq.group_Batch3_B <span class="sc">+</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    uniq.group_Batch4_A <span class="sc">+</span> uniq.group_Batch4_B <span class="sc">+</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># location.test.box</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    location.test.box_Side    <span class="sc">+</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># continuous predictors</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    invest.window.sq.z        <span class="sc">+</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    time.trial.begins.z       <span class="sc">+</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    group.trapped.pig.order.z ,</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dat.distress,</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster =</span> trapped.pig.uniq.id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="draw-survival-curve" class="level2">
+<h2 class="anchored" data-anchor-id="draw-survival-curve">Draw survival curve</h2>
+<ul>
+<li>setting the argument <code>fun = "event"</code> plots cumulative events,<em>i.e.</em> flipped survival = mortality curves</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">ggsurvplot</span>(<span class="fu">survfit</span>(plot.mod),</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">data =</span> dat,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">fun =</span> <span class="st">"event"</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">break.x.by =</span> <span class="dv">1</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">19</span>),</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">conf.int =</span> <span class="cn">FALSE</span>, <span class="at">pval =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">size =</span> <span class="dv">1</span>,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">linetype =</span> <span class="st">"strata"</span>,</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"aquamarine4"</span>, <span class="st">"firebrick"</span>), </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">legend =</span> <span class="st">"top"</span>,</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">legend.title =</span> <span class="st">"Signals distress while trapped"</span>,</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">legend.labs =</span> <span class="fu">c</span>(<span class="st">"No"</span>,<span class="st">"Yes"</span>),</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>                       <span class="at">title =</span> <span class="st">""</span>, <span class="at">subtitle =</span> <span class="st">""</span>,</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>                       <span class="at">caption =</span> <span class="st">""</span>,</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>                       <span class="at">xlab =</span> <span class="st">"Minute interval"</span>,</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>                       <span class="at">ylab =</span> <span class="st">"Probability of being released"</span>,</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>                       <span class="at">font.legend =</span> <span class="fu">c</span>(<span class="dv">14</span>, <span class="st">"plain"</span>, <span class="st">"black"</span>),</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>                       <span class="at">font.title =</span> <span class="fu">c</span>(<span class="dv">14</span>, <span class="st">"plain"</span>, <span class="st">"black"</span>),</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>                       <span class="at">font.subtitle =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="st">"italic"</span>, <span class="st">"black"</span>),</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>                       <span class="at">font.caption =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="st">"plain"</span>, <span class="st">"black"</span>),</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>                       <span class="at">font.x =</span> <span class="fu">c</span>(<span class="dv">14</span>, <span class="st">"bold"</span>, <span class="st">"black"</span>),</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>                       <span class="at">font.y =</span> <span class="fu">c</span>(<span class="dv">14</span>, <span class="st">"bold"</span>, <span class="st">"black"</span>),</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>                       <span class="at">font.tickslab =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="st">"plain"</span>, <span class="st">"black"</span>),</span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>                       <span class="at">ggtheme =</span> my_theme,</span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>                       <span class="do">########## risk table #########,</span></span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>                       <span class="at">risk.table =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>                       <span class="at">risk.table.title =</span> <span class="st">"Risk table"</span>,</span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>                       <span class="at">risk.table.height =</span> <span class="fl">0.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="survival-distress_files/figure-html/plot-2-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="how-to-cite-r" class="level1">
+<h1>How to cite R</h1>
+<p>“All analyses were performed using R Statistical Software (version 4.2.0; R Core Team 2022)”.</p>
+<p>Reference: R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+To cite R in publications use:
+
+  R Core Team (2022). R: A language and environment for statistical
+  computing. R Foundation for Statistical Computing, Vienna, Austria.
+  URL https://www.R-project.org/.
+
+Ein BibTeX-Eintrag für LaTeX-Benutzer ist
+
+  @Manual{,
+    title = {R: A Language and Environment for Statistical Computing},
+    author = {{R Core Team}},
+    organization = {R Foundation for Statistical Computing},
+    address = {Vienna, Austria},
+    year = {2022},
+    url = {https://www.R-project.org/},
+  }
+
+We have invested a lot of time and effort in creating R, please cite it
+when using it for data analysis. See also 'citation("pkgname")' for
+citing R packages.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>version<span class="sc">$</span>version.string</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "R version 4.2.0 (2022-04-22 ucrt)"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"fastDummies"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Um Paket 'fastDummies' in Publikationen zu zitieren, nutzen Sie bitte:
+
+  Kaplan J (2020). _fastDummies: Fast Creation of Dummy (Binary)
+  Columns and Rows from Categorical Variables_. R package version
+  1.6.3, &lt;https://CRAN.R-project.org/package=fastDummies&gt;.
+
+Ein BibTeX-Eintrag für LaTeX-Benutzer ist
+
+  @Manual{,
+    title = {fastDummies: Fast Creation of Dummy (Binary) Columns and Rows from
+Categorical Variables},
+    author = {Jacob Kaplan},
+    year = {2020},
+    note = {R package version 1.6.3},
+    url = {https://CRAN.R-project.org/package=fastDummies},
+  }</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"survival"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Um Paket 'survival' in Publikationen zu zitieren, nutzen Sie bitte:
+
+  Therneau T (2022). _A Package for Survival Analysis in R_. R package
+  version 3.3-1, &lt;https://CRAN.R-project.org/package=survival&gt;.
+
+  Terry M. Therneau, Patricia M. Grambsch (2000). _Modeling Survival
+  Data: Extending the Cox Model_. Springer, New York. ISBN
+  0-387-98784-3.
+
+To see these entries in BibTeX format, use 'print(&lt;citation&gt;,
+bibtex=TRUE)', 'toBibtex(.)', or set
+'options(citation.bibtex.max=999)'.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"survminer"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Um Paket 'survminer' in Publikationen zu zitieren, nutzen Sie bitte:
+
+  Kassambara A, Kosinski M, Biecek P (2021). _survminer: Drawing
+  Survival Curves using 'ggplot2'_. R package version 0.4.9,
+  &lt;https://CRAN.R-project.org/package=survminer&gt;.
+
+Ein BibTeX-Eintrag für LaTeX-Benutzer ist
+
+  @Manual{,
+    title = {survminer: Drawing Survival Curves using 'ggplot2'},
+    author = {Alboukadel Kassambara and Marcin Kosinski and Przemyslaw Biecek},
+    year = {2021},
+    note = {R package version 0.4.9},
+    url = {https://CRAN.R-project.org/package=survminer},
+  }</code></pre>
+</div>
+</div>
+</section>
+<section id="session-info" class="level1">
+<h1>Session Info</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.2.0 (2022-04-22 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19045)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=German_Germany.utf8  LC_CTYPE=German_Germany.utf8   
+[3] LC_MONETARY=German_Germany.utf8 LC_NUMERIC=C                   
+[5] LC_TIME=German_Germany.utf8    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] lmtest_0.9-40     zoo_1.8-10        survminer_0.4.9   ggpubr_0.4.0     
+ [5] survival_3.3-1    fastDummies_1.6.3 forcats_0.5.1     stringr_1.4.0    
+ [9] dplyr_1.0.9       purrr_0.3.4       readr_2.1.2       tidyr_1.2.0      
+[13] tibble_3.1.7      ggplot2_3.3.6     tidyverse_1.3.1  
+
+loaded via a namespace (and not attached):
+ [1] nlme_3.1-157      ggtext_0.1.2      fs_1.5.2          lubridate_1.8.0  
+ [5] bit64_4.0.5       httr_1.4.4        tools_4.2.0       backports_1.4.1  
+ [9] utf8_1.2.2        R6_2.5.1          DBI_1.1.3         mgcv_1.8-40      
+[13] colorspace_2.0-3  withr_2.5.0       tidyselect_1.1.2  gridExtra_2.3    
+[17] bit_4.0.4         compiler_4.2.0    cli_3.3.0         rvest_1.0.3      
+[21] xml2_1.3.3        labeling_0.4.2    scales_1.2.1      survMisc_0.5.6   
+[25] digest_0.6.29     rmarkdown_2.16    pkgconfig_2.0.3   htmltools_0.5.2  
+[29] dbplyr_2.2.1      fastmap_1.1.0     htmlwidgets_1.5.4 rlang_1.0.6      
+[33] readxl_1.4.0      rstudioapi_0.14   generics_0.1.3    farver_2.1.0     
+[37] jsonlite_1.8.0    vroom_1.5.7       car_3.1-0         magrittr_2.0.3   
+[41] Matrix_1.5-3      Rcpp_1.0.8.3      munsell_0.5.0     fansi_1.0.3      
+[45] abind_1.4-5       lifecycle_1.0.2   stringi_1.7.6     yaml_2.3.5       
+[49] carData_3.0-5     grid_4.2.0        parallel_4.2.0    crayon_1.5.1     
+[53] lattice_0.20-45   haven_2.5.0       splines_4.2.0     gridtext_0.1.5   
+[57] hms_1.1.2         knitr_1.40        pillar_1.8.1      markdown_1.1     
+[61] ggsignif_0.6.3    reprex_2.0.2      glue_1.6.2        evaluate_0.16    
+[65] data.table_1.14.2 modelr_0.1.9      vctrs_0.4.1       tzdb_0.3.0       
+[69] cellranger_1.1.0  gtable_0.3.1      km.ci_0.5-6       assertthat_0.2.1 
+[73] xfun_0.31         xtable_1.8-4      broom_1.0.1       rstatix_0.7.0    
+[77] KMsurv_0.1-5      ellipsis_0.3.2   </code></pre>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

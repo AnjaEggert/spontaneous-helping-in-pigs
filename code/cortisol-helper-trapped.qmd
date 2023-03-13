@@ -1,0 +1,111 @@
+---
+title: "Cortisol in matched helper and trapped pigs"
+author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
+date: "`r Sys.Date()`" 
+editor: visual
+code-fold: false
+toc: true
+format: html
+---
+
+# Libraries
+
+```{r, libraries, warning=FALSE, message=FALSE, echo=TRUE}
+library(tidyverse)     # tidy universe
+library(viridis)       # color scale
+library(rstatix)       # get_summary_stats()
+library(ggpubr)        # paired ggplot
+```
+
+```{r, my_theme, echo = FALSE}
+my_theme = theme_classic() +
+  theme(axis.title = element_text(face="bold", size=14),
+        axis.text  = element_text(size=12, angle = 0, vjust = 0.5),
+        plot.title = element_text(face="bold", size=14),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+```
+
+```{r, seed}
+set.seed(1989)
+```
+
+# Data
+
+Comparison of post-release salivary cortisol in trapped pigs and their helpers for a subset of n = 50 trials.
+
+## Read data
+
+```{r, data}
+dat <- read_csv("../data/cortisol-helper-trapped.csv")
+```
+
+## Data summary
+
+```{r, data-sum}
+dat %>% 
+  rstatix::get_summary_stats(c(cort_potential_helper, cort_trapped), 
+                             type = "common")
+```
+
+# Paired t-test
+
+```{r, t-test}
+t.test(dat$cort_trapped, dat$cort_potential_helper,
+       paired = TRUE, alternative = "two.sided")
+```
+
+# Pearson correlation
+
+```{r, corr}
+cor.test(dat$cort_trapped, dat$cort_potential_helper,
+         method = "pearson")
+```
+
+# Plot
+
+```{r, plot-1}
+plot <- dat %>% 
+  ggpaired(
+    cond1      = "cort_potential_helper",
+    cond2      = "cort_trapped",
+    color      = "condition",
+    palette    = c("#377EB8","#C51B7D"),
+    line.color = "gray84",
+    line.size  = 0.5,
+    point.size = 3,
+    alpha      = 0.8) +
+  scale_x_discrete(labels = c("Helper", "Trapped pig")) + 
+  scale_y_continuous(limits = c(0, 14), breaks = seq(0, 14, by = 2)) +
+  labs(x = "Paired subjects",
+       y = "Post-release cortisol (ng/mL)") + 
+  my_theme +
+  theme(legend.position = "none")
+```
+
+```{r, plot-2, fig.height=8, fig.width=10, warning=FALSE}
+plot
+```
+
+# How to cite R
+
+"All analyses were performed using R Statistical Software (version 4.2.0; R Core Team 2022)".
+
+Reference: R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+```{r, cite-r}
+citation()
+version$version.string
+```
+
+```{r, cite-packages}
+citation("tidyverse")
+citation("viridis")
+citation("ggpubr")
+```
+
+# Session Info
+
+```{r, session}
+sessionInfo()
+```

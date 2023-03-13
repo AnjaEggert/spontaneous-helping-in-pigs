@@ -1,0 +1,278 @@
+---
+title: "Probability to be helped over time "
+author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
+date: "`r Sys.Date()`" 
+editor: visual
+code-fold: false
+toc: true
+format: html
+---
+
+# Libraries
+
+```{r, libraries, warning=FALSE, message=FALSE, echo=TRUE}
+library(tidyverse)     # tidy universe
+library(fastDummies)   # create dummy coded factors
+library(survival)      # create survival object and survival curves
+library(survminer)     # model diagnostics
+library(lmtest)        # lrtest() model comparison
+```
+
+```{r, my_theme, echo = FALSE}
+my_theme = theme_classic() +
+  theme(axis.title = element_text(face="bold", size=14),
+        axis.text  = element_text(size=12, angle = 0, vjust = 0.5),
+        plot.title = element_text(face="bold", size=14),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+```
+
+```{r, seed}
+set.seed(1989)
+```
+
+# Data
+
+Using survival analysis to analyse time to open door of trapped pigs. Data set contains time-resolved data of 58 trapped pigs.
+
+## Read data
+
+```{r, data, warning = FALSE}
+dat <- read_csv("../data/survival-distress.csv")
+```
+
+## Adjust data types
+
+```{r, data-adj}
+dat <- dat %>% 
+  # make factors
+  mutate_at(vars(distress.binom,
+                 sex,
+                 location.test.box,
+                 uniq.group,
+                 trapped.pig.uniq.id), ~as.factor(.)) %>% 
+  mutate(invest.window.sq.z        = as.vector(scale(sqrt(invest.window)))) %>% 
+  mutate(time.trial.begins.z       = as.vector(scale(time.trial.begins))) %>% 
+  mutate(group.trapped.pig.order.z = as.vector(scale(group.trapped.pig.order)))
+
+str(dat)
+```
+
+# Define survival object
+
+-   create `tstart` and `tstop` columns to define a time-varying survival object
+
+```{r, data-surv-1}
+dat <- dat %>% 
+  group_by(trapped.pig.uniq.id) %>% 
+  mutate(tstop  = interval_count) %>% 
+  mutate(tstart = interval_count-1) %>% 
+  ungroup()
+```
+
+-   maximum duration of the tests was 20 minutes, *i.e.* if time to release trapped pigs `lat.helped.min` = 20 (or the aborted trial) we have *right censored data*
+-   create `event` column, `event = 1` if `lat.helped.min` \< 20 (pigs were helped within the test period), all others have `event = 0`, i.e. those were not helped within the test period.
+
+```{r, data-surv-2}
+dat <- dat %>% 
+  mutate(event = 0L) %>% 
+  group_by(trapped.pig.uniq.id) %>% 
+  # last obs for each pig = 1
+  mutate(event = case_when(outcome2 == "Full_trial" & 
+                           lat.helped.min < 20 ~ 
+                           replace(event,n(), 1L),
+                           TRUE ~ 0L)) %>%
+  ungroup() %>% 
+  arrange(trapped.pig.uniq.id)
+```
+
+-   check correct definition of the survival object using `survival::Surv()`, a `"+"` indicates right censoring (*i.e.*, not helped within 20 minutes or aborted trial).
+
+```{r, data-surv-3}
+with(dat, survival::Surv(tstart, tstop, event))
+```
+
+# Cox proportional hazards model
+
+-   run a Cox proportional hazards model (*Cox PH model* or sometimes Cox PH regression) with time-dependent covariates
+
+## Run full model
+
+```{r, model-full}
+mod <- survival::coxph(
+  survival::Surv(tstart, tstop, event) ~ 
+    # test predictors
+    distress.binom            +
+    invest.window.sq.z        +
+    # control predictors
+    sex                       +
+    time.trial.begins.z       +
+    location.test.box         +
+    group.trapped.pig.order.z +
+    uniq.group,
+  data = dat,
+  cluster = trapped.pig.uniq.id)
+```
+
+## Run reduced model
+
+```{r, model-reduced}
+mod.red <- survival::coxph(
+  survival::Surv(tstart, tstop, event) ~ 
+    # test predictors: none
+    # control predictors
+    sex                       +
+    time.trial.begins.z       +
+    location.test.box         +
+    group.trapped.pig.order.z +
+    uniq.group,
+  data = dat,
+  cluster = trapped.pig.uniq.id)
+```
+
+## Model comparison
+
+```{r, model-comp}
+lmtest::lrtest(mod.red, mod)
+```
+
+## Testing Proportional Hazards Assumption
+
+-   testing proportional hazards (PH) assumption using graphical diagnostics based on the scaled Schoenfeld residuals
+
+```{r, model-ph, fig.height=10, fig.width=10, warning=FALSE}
+survminer::ggcoxzph(cox.zph(mod))
+```
+
+## Testing Influential Observations
+
+-   testing for influential observations or outliers using graphical diagnostics of the deviance residuals
+
+```{r, model-outl, fig.height=6, fig.width=6, warning=FALSE}
+survminer::ggcoxdiagnostics(mod, type = "deviance",
+                 linear.predictions = FALSE, ggtheme = my_theme)
+```
+
+# Analysis of Deviance Table
+
+-   with `car::Anova()` we calculate deviance table and $Wald$ statistic, type II because of no interactions
+
+```{r, model-table}
+car::Anova(mod, type ="II", test.statistic = "Wald")
+```
+
+# Hazard ratios
+
+```{r, model-summary}
+summary(mod)
+```
+
+# Survival curves
+
+-   fit an additional **plot.model** with all predictors except the predictor of interest (`distress.binom`) having a mean of zero
+
+## Dummy-coding
+
+-   using `fastDummies` to dummy-code categorical predictors, continuous predictors are z-transformed
+
+```{r, dummy-code}
+dat.distress <- fastDummies::dummy_cols(dat,
+                                   select_columns = c(
+                                     "sex",
+                                     "uniq.group",
+                                     "location.test.box"),
+                                   remove_first_dummy = TRUE) %>% 
+  mutate_at(vars(starts_with("sex_")), 
+            ~(.)-mean(.)) %>% 
+  mutate_at(vars(starts_with("uniq.group_")), 
+            ~(.)-mean(.)) %>%
+  mutate_at(vars(starts_with("location.test.box_")),
+            ~(.)-mean(.))
+```
+
+## Run plot model
+
+-   estimate two survival curves for `distress.binom`, *i.e.* distress yes/no
+
+```{r, plot-mod}
+plot.mod <- survival::coxph(
+  survival::Surv(tstart, tstop, event) ~ 
+    # strata distress
+    strata(distress.binom) +
+    # sex
+    sex_Male +   
+    # uniq.group
+    uniq.group_Batch1_B + 
+    uniq.group_Batch2_A + uniq.group_Batch2_B +
+    uniq.group_Batch3_A + uniq.group_Batch3_B +
+    uniq.group_Batch4_A + uniq.group_Batch4_B +
+    # location.test.box
+    location.test.box_Side    +
+    # continuous predictors
+    invest.window.sq.z        +
+    time.trial.begins.z       +
+    group.trapped.pig.order.z ,
+  data = dat.distress,
+  cluster = trapped.pig.uniq.id)
+```
+
+## Draw survival curve
+
+-   setting the argument `fun = "event"` plots cumulative events,*i.e.* flipped survival = mortality curves
+
+```{r, plot-1}
+plot <- ggsurvplot(survfit(plot.mod),
+                       data = dat,
+                       fun = "event",
+                       break.x.by = 1, xlim = c(0, 19),
+                       conf.int = FALSE, pval = FALSE,
+                       size = 1,
+                       linetype = "strata",
+                       palette = c("aquamarine4", "firebrick"), 
+                       legend = "top",
+                       legend.title = "Signals distress while trapped",
+                       legend.labs = c("No","Yes"),
+                       title = "", subtitle = "",
+                       caption = "",
+                       xlab = "Minute interval",
+                       ylab = "Probability of being released",
+                       font.legend = c(14, "plain", "black"),
+                       font.title = c(14, "plain", "black"),
+                       font.subtitle = c(12, "italic", "black"),
+                       font.caption = c(12, "plain", "black"),
+                       font.x = c(14, "bold", "black"),
+                       font.y = c(14, "bold", "black"),
+                       font.tickslab = c(12, "plain", "black"),
+                       ggtheme = my_theme,
+                       ########## risk table #########,
+                       risk.table = TRUE,
+                       risk.table.title = "Risk table",
+                       risk.table.height = 0.4)
+```
+
+```{r, plot-2, fig.height=8, fig.width=8, warning=FALSE}
+plot
+```
+
+# How to cite R
+
+"All analyses were performed using R Statistical Software (version 4.2.0; R Core Team 2022)".
+
+Reference: R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+```{r, cite-r}
+citation()
+version$version.string
+```
+
+```{r, cite-packages}
+citation("fastDummies")
+citation("survival")
+citation("survminer")
+```
+
+# Session Info
+
+```{r, session}
+sessionInfo()
+```
