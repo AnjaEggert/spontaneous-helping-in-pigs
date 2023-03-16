@@ -32,7 +32,7 @@ set.seed(1989)
 
 # Data
 
-This data set contains data of 40 pigs, 5 pigs in 8 groups. They were tested on 5 familiarization days.
+This data set contains data of 8 groups tested over 5 familiarization days. Each group consists of 7 to 10 pigs. The response is the latency for a door to be opened, which can only happen once per group per day, *i.e.* n = 40.
 
 ## Read data
 
