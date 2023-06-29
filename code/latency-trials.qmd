@@ -1,21 +1,22 @@
 ---
-title: "Latency across trials"
+title: "Effect of trial order on latency to open door of testbox"
 author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
 date: "`r Sys.Date()`" 
 editor: visual
 code-fold: false
 toc: true
 format: html
+self-contained: true
 ---
 
 # Libraries
 
-```{r, libraries, warning=FALSE, message=FALSE, echo=TRUE}
+```{r, warning=FALSE, message=FALSE, echo=TRUE}
 library(tidyverse)     # tidy universe
-library(viridis)       # color scale
+library(viridis)       # viridis colours
 ```
 
-```{r, my_theme, echo = FALSE}
+```{r, echo = FALSE}
 my_theme = theme_classic() +
   theme(axis.title = element_text(face="bold", size=14),
         axis.text  = element_text(size=12, angle = 0, vjust = 0.5),
@@ -24,72 +25,60 @@ my_theme = theme_classic() +
         panel.grid.minor = element_blank())
 ```
 
-```{r, seed}
+```{r}
 set.seed(1989)
 ```
 
-# Data
+# Task
 
-Latency for 75 helper pigs to release trapped pigs across 10 trials within each group.
+Test for effect of trial order on latency to open door, for test box and empty box.
 
-```{r, data}
+# Read data
+
+```{r, warning = FALSE}
 dat <- read_csv("../data/latency-trials.csv")
-
-str(dat)
 ```
 
-# Data summary
+# Adjust data types
 
--   How many pigs were released by another helper pig and how many by a human?
-
-```{r, data-1}
-table(dat$helper)
-```
-
--   What was the overall latency time?
-
-```{r, data-2}
-dat %>%
-  filter(helper == "Pig") %>%
-  rstatix::get_summary_stats(lat.helped.min, 
-                             type = "common")
-```
-
--   What was the latency time for each test day?
-
-```{r, data-3}
-dat %>%
-  filter(helper == "Pig") %>%
-  group_by(trapped.order) %>% 
-  rstatix::get_summary_stats(lat.helped.min, 
-                             type = "common")
+```{r}
+dat <- dat %>% 
+  mutate_at(vars(trapped.order), ~as.factor(.))
 ```
 
 # Plot
 
-```{r, plot-1, fig.height=7, fig.width=10, warning=FALSE}
-plot <- dat %>% 
-  ggplot() + 
+```{r}
+plot <- dat %>%
+  ggplot() +
   geom_boxplot(data = subset(dat, helper == "Pig"),
-               aes(x = as.factor(trapped.order), 
+               aes(x = trapped.order, 
                    y = lat.helped.min),
-               outlier.shape = NA, width = 0.5) + 
-  geom_jitter(aes(x     = as.factor(trapped.order), 
-                  y     = lat.helped.min,
-                  col   = id.group,
-                  shape = helper), 
-              size = 3, width = 0.15, alpha = 0.8) +
+               outlier.shape = NA, width = 0.5, col = "orchid", show.legend = FALSE) +
+  geom_point(aes(x     = trapped.order, 
+                 y     = lat.helped.min,
+                 col   = id.group,
+                 shape = helper),
+             position = position_jitterdodge(jitter.width  = 0.9,
+                                             jitter.height = 0.0,
+                                             dodge.width   = 0.5),
+             size = 3, alpha = 0.5) +
+  # only legend for helped = yes
   scale_shape_manual(values = c(17, 19),
-                     labels = c("=  pig released by human", "")) +
-  scale_color_manual(values = c(viridis(n=8)),
+                     labels = c("Pig released by human", "")) +
+  scale_color_manual(values = viridis(n=8),
                      guide="none") +
   scale_y_continuous(lim = c(0, 20.01), breaks = seq(0, 20, 5)) +
-  labs(x = "Group testing order",
-       y = "Latency for helper to release trapped pig (min)",
+  labs(x = "Test trial",
+       y = "Latency to first open door (min)",
        shape = "") +
   my_theme +
+  # change only the legend appearance without affecting the plot
+  # increase symbol size, remove symbol for pig
   guides(shape = guide_legend(override.aes = list(size  = 4,
                                                   shape = c(17, NA)))) +
+  # legend position: c(0,0) “bottom left” and c(1,1) “top right”
+  # legend appearance
   theme(legend.justification = c(1,0.6),
         legend.position = c(1,0.6),
         legend.background = element_rect(fill = NA, colour ="black",
@@ -97,7 +86,7 @@ plot <- dat %>%
         legend.text = element_text(size=12))
 ```
 
-```{r, plot-2, fig.height=10, fig.width=10, warning=FALSE}
+```{r, fig.height=10, fig.width=10, warning=FALSE}
 plot
 ```
 
@@ -107,13 +96,18 @@ plot
 
 Reference: R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
-```{r, citations}
+```{r}
+citation()
+version$version.string
+```
+
+```{r}
 citation("tidyverse")
 citation("viridis")
 ```
 
 # Session Info
 
-```{r, session}
+```{r}
 sessionInfo()
 ```

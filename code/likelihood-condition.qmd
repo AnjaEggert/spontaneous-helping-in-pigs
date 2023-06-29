@@ -1,0 +1,282 @@
+---
+title: "Likelihood of opening door in different conditions"
+author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
+date: "`r Sys.Date()`" 
+editor: visual
+code-fold: false
+toc: true
+format: html
+self-contained: true
+---
+
+# Libraries
+
+```{r, warning=FALSE, message=FALSE, echo=TRUE}
+library(tidyverse)     # tidy universe
+library(lmerTest)      # mixed model lme4 with p-values
+library(emmeans)       # emmeans
+```
+
+```{r, echo = FALSE}
+my_theme = theme_classic() +
+  theme(axis.title = element_text(face="bold", size=14),
+        axis.text  = element_text(size=12, angle = 0, vjust = 0.5),
+        plot.title = element_text(face="bold", size=14),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+```
+
+```{r}
+set.seed(1989)
+```
+
+# Task
+
+Is there a difference in likelihood to open empty or test compartment depending on the condition?
+
+# Read data
+
+```{r, warning = FALSE}
+dat <- read_csv("../data/likelihood-condition.csv")
+```
+
+## Adjust data types
+
+```{r}
+dat <- dat %>% 
+  mutate_at(vars(test.day,
+                 daily.test.order.within.group), ~as.factor(.))
+```
+
+# Binomial mixed model
+
+Run a model asking whether likelihood to open door is influenced by location of door on separation and test days.
+
+## Run full model
+
+```{r}
+contr = glmerControl(optimizer   = "bobyqa", 
+                     optCtrl     = list(maxfun=100000), 
+                     calc.derivs = FALSE)
+```
+
+```{r}
+mod <- glmer(opened.box ~
+               # test predictors
+               Context * Box +
+               # control predictor
+               location.box + 
+               test.day + 
+               daily.test.order.within.group +
+              # random/nested factor
+              (1|id.group),
+            # data set
+            data = dat,
+            family = binomial,
+            # numerical optimizer
+            control = contr)
+```
+
+## Run reduced model
+
+```{r}
+mod.red <- glmer(opened.box ~
+               # no test predictors
+               # control predictor
+               location.box + 
+               test.day + 
+               daily.test.order.within.group +
+              # random/nested factor
+              (1|id.group),
+            # data set
+            data = dat,
+            family = binomial,
+            # numerical optimizer
+            control = contr)
+```
+
+## Model comparison
+
+```{r}
+anova(mod.red, mod, test = "Chisq")
+```
+
+## Summary of model
+
+```{r}
+summary(mod)
+```
+
+```{r}
+car::Anova(mod, type ="II", test.statistic = "Chisq")
+```
+
+```{r}
+round(summary(mod)$coefficients, 3)
+
+CIs_likelihoodmodel <- confint(mod, method="Wald")
+round(CIs_likelihoodmodel,3)  
+```
+
+## Performance of model
+
+-   `performance` package used to check model assumptions
+
+```{r, fig.height=25, fig.width=10, warning=FALSE }
+performance::check_model(mod)
+```
+
+# Estimated marginal means
+
+## All comparisons
+
+```{r}
+emm <- emmeans(mod, 
+               specs  = pairwise ~ Box * Context,
+               type   = "response",
+               adjust = "tukey")
+
+emm
+```
+
+## Simple comparisons
+
+```{r}
+emm <- emmeans(mod, 
+               specs  = pairwise ~ Box * Context,
+               type   = "response",
+               adjust = "tukey")
+
+simp <- pairs(emm, simple = "each")
+simp
+```
+
+## Within comparisons
+
+```{r}
+emm <- emmeans(mod, 
+               specs  = pairwise ~ Box | Context,
+               type   = "response",
+               adjust = "tukey")
+
+emm
+```
+
+# Plot
+
+## Calculate probability within each group
+
+```{r}
+dat.pig <- dat %>% 
+  select(trapped.pig.unique.id,
+         id.group,
+         Context, Box,
+         opened.box) %>% 
+  # calculate probability per pig (75 pigs in total)
+  group_by(id.group, Context, Box) %>% 
+  summarize(prob.helped = sum(opened.box)/n(),
+            nr.helped   = sum(opened.box),
+            n_trials    = n()) %>% 
+  ungroup() 
+```
+
+## Compact letter display
+
+-   we plot the emmeans of all pairwise comparisons
+
+```{r}
+emm <- emmeans(mod, 
+               specs  = pairwise ~ Box * Context,
+               type   = "response",
+               adjust = "tukey")
+```
+
+```{r}
+cld <- multcomp::cld(emm$emmeans, Letters=letters)
+cld$.group <- str_replace_all(cld$.group, fixed(" "), "")
+
+cld <- as_tibble(cld) %>% 
+  arrange(Context, Box)
+
+cld
+```
+
+## Plot with emmeans
+
+```{r}
+# prepare x-position of emmeans
+cld$xpos   <- c(0.7, 1.3, 1.7, 2.3)
+cld$xpos.l <- c(0.55, 1.4, 1.55, 2.4)
+
+plot <- dat.pig %>%
+  ggplot() +
+  geom_boxplot(aes(x   = Context, 
+                   y   = prob.helped,
+                   col = Box),
+               outlier.shape = NA, width = 0.5, show.legend = FALSE) +
+  geom_jitter(aes(x   = Context, 
+                  y   = prob.helped, 
+                  col = Box,
+                  shape = Box),
+              position = position_jitterdodge(jitter.width  = 0.4,
+                                              dodge.width   = 0.5),
+              size = 3, alpha = 0.7) +
+  scale_colour_manual(labels = c("Empty compartment",
+                                 "Test compartment"),
+                      values = c("grey50", "orchid")) +
+  scale_shape_manual(labels = c("Empty compartment",
+                                 "Test compartment"),
+                     values = c(17, 19)) +
+  scale_y_continuous(lim = c(0, 1.02), breaks = seq(0, 1, 0.2)) +
+  scale_x_discrete(labels= c("Separation", "Test")) +
+  geom_errorbar(data = cld,
+                aes(x = xpos,
+                    ymin = prob-SE, ymax = prob+SE),
+                col = "black", width = 0.08) +
+  geom_point(data = cld,
+             aes(x = xpos, y = prob),
+             size = 3, color = "black") +
+  geom_text(data = cld,
+            aes(y = prob, x = xpos.l, label = .group, hjust = 0),
+            col = "black") +
+  labs(x = "Condition",
+       y = "Likelihood of opening a door") +
+  my_theme +
+  theme(legend.justification = c(0.1, 0.9),
+        legend.position      = c(0.1, 0.9),
+        legend.background = element_rect(fill     = NA,
+                                         colour   = "black",
+                                         size     = 0.3,
+                                         linetype = "solid"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12)) +
+  guides(shape = guide_legend(override.aes = list(alpha = 1,
+                                                  size  = 4)))
+```
+
+```{r, plot-2, fig.height=10, fig.width=10, warning=FALSE}
+plot
+```
+
+# How to cite R
+
+"All analyses were performed using R Statistical Software (version 4.2.0; R Core Team 2022)".
+
+Reference: R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+```{r}
+citation()
+version$version.string
+```
+
+```{r}
+citation("tidyverse")
+citation("lmerTest")
+citation("emmeans")
+```
+
+# Session Info
+
+```{r}
+sessionInfo()
+```

@@ -1,0 +1,127 @@
+---
+title: "Testing for side preference for a box"
+author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
+date: "`r Sys.Date()`" 
+editor: visual
+code-fold: false
+toc: true
+format: html
+self-contained: true
+---
+
+# Libraries
+
+```{r, warning=FALSE, message=FALSE, echo=TRUE}
+library(kableExtra)    # html tables
+library(tidyverse)     # tidy universe
+library(rstatix)       # pipe friendly binom_test()
+```
+
+# Read data
+
+```{r, warning = FALSE}
+dat <- read_csv("../data/side-preference-box.csv")
+```
+
+# Binomial test
+
+A binomial test compares a sample proportion to a hypothesized proportion.
+
+## Across familiarization day
+
+Outcomes (front or side) are equally distributed when summarized per familiarization day.
+
+```{r}
+dat %>% 
+  group_by(familiarization.day, location.box) %>% 
+  summarize(nto = sum(number.times.opens)) %>% 
+  pivot_wider(names_from = location.box, 
+              values_from = nto) %>% 
+  ungroup() %>% 
+  # test per fam day
+  group_by(familiarization.day) %>% 
+  mutate(binom.p = binom_test(x = Front,
+                                 n = Front + Side,
+                                 p = 0.5)$p) %>% 
+  ungroup() %>% 
+  mutate(no. = row_number()) %>%
+  relocate(no.) %>% 
+  kable(caption = "Equal choice front or side per familiarization day?") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
+  scroll_box(width = "500px")
+```
+
+## Across individual pigs
+
+Outcomes (front or side) are equally distributed in all but 4 individual pigs. Those with not equal outcomes are DG2_F\_7 (Front:2, Side: 17), DG4_W\_8 (Front:2, Side: 12), DG3_W\_7 (Front:7, Side: 20), DG5_W\_9 (Front:12, Side: 3).
+
+```{r}
+dat %>% 
+  group_by(pig.unique.id, location.box) %>% 
+  summarize(nto = sum(number.times.opens)) %>% 
+  pivot_wider(names_from = location.box, 
+              values_from = nto) %>% 
+  replace(is.na(.), 0) %>% 
+  ungroup() %>% 
+  # test per fam day
+  group_by(pig.unique.id) %>% 
+  mutate(binom.p = binom_test(x = Front,
+                                 n = Front + Side,
+                                 p = 0.5)$p) %>% 
+  ungroup() %>% 
+  arrange(binom.p) %>% 
+  mutate(no. = row_number()) %>%
+  relocate(no.) %>%
+  kable(caption = "Equal choice front or side per pig?") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
+  scroll_box(width = "500px", height = "500px")
+```
+
+## Across social groups
+
+Outcomes (front or side) are equally distributed when summarized per group.
+
+```{r}
+dat %>% 
+  group_by(unique.group, location.box) %>% 
+  summarize(nto = sum(number.times.opens)) %>% 
+  pivot_wider(names_from = location.box, 
+              values_from = nto) %>% 
+  replace(is.na(.), 0) %>% 
+  ungroup() %>% 
+  # test per fam day
+  group_by(unique.group) %>% 
+  mutate(binom.p = binom_test(x = Front,
+                                 n = Front + Side,
+                                 p = 0.5)$p) %>% 
+  ungroup() %>% 
+  arrange(binom.p) %>% 
+  mutate(no. = row_number()) %>%
+  relocate(no.) %>%
+  kable(caption = "Equal choice front or side per group?") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
+  scroll_box(width = "500px")
+```
+
+# How to cite R
+
+"All analyses were performed using R Statistical Software (version 4.2.0; R Core Team 2022)".
+
+Reference: R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+```{r}
+citation()
+version$version.string
+```
+
+```{r}
+citation("tidyverse")
+citation("kableExtra")
+citation("rstatix")
+```
+
+# Session Info
+
+```{r}
+sessionInfo()
+```

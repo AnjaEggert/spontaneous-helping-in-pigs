@@ -6,6 +6,7 @@ editor: visual
 code-fold: false
 toc: true
 format: html
+self-contained: true
 ---
 
 # Libraries

@@ -1,23 +1,23 @@
 ---
-title: "Latency to open door during familiarization"
+title: "Difference in latency to open each box on familiarization days based on box location"
 author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
 date: "`r Sys.Date()`" 
 editor: visual
 code-fold: false
 toc: true
 format: html
+self-contained: true
 ---
 
 # Libraries
 
-```{r, libraries, warning=FALSE, message=FALSE, echo=TRUE}
+```{r, warning=FALSE, message=FALSE, echo=TRUE}
 library(tidyverse)     # tidy universe
-library(emmeans)       # post-hoc
-library(performance)   # model performance
-library(viridis)       # colours
+library(lmerTest)      # mixed model lme4 with p-values
+library(emmeans)       # emmeans
 ```
 
-```{r, my_theme, echo = FALSE}
+```{r, echo = FALSE}
 my_theme = theme_classic() +
   theme(axis.title = element_text(face="bold", size=14),
         axis.text  = element_text(size=12, angle = 0, vjust = 0.5),
@@ -26,135 +26,191 @@ my_theme = theme_classic() +
         panel.grid.minor = element_blank())
 ```
 
-```{r, seed}
+```{r}
 set.seed(1989)
 ```
 
-# Data
+# Task
 
-This data set contains data of 8 groups tested over 5 familiarization days. Each group consists of 7 to 10 pigs. The response is the latency for a door to be opened, which can only happen once per group per day, *i.e.* n = 40.
+Is there a difference in latency to open each box on familiarization days based on box location?
 
-## Read data
+# Read data
 
-```{r, data, warning = FALSE}
+```{r, warning = FALSE}
 dat <- read_csv("../data/latency-familiarization.csv")
 ```
 
 ## Adjust data types
 
-```{r, data-adj}
+```{r}
 dat <- dat %>% 
   mutate_at(vars(familiarization_day,
-                 unique.group), ~as.factor(.))
-  
-str(dat)
+                 location.box,
+                 group.daily.test.order), ~as.factor(.))
 ```
 
-## Data summary
-
-```{r, data-sum}
-dat %>%
-  group_by(familiarization_day) %>% 
-  rstatix::get_summary_stats(lat.first.open.sec, 
-                             type = "common")
-```
-
-# Linear model
+# Linear mixed model
 
 We model repeated measures over 5 days to see an effect of training during familiarization.
 
 ## Run full model
 
-```{r, model-full}
-mod <- lm(sqrt(lat.first.open.sec) ~ 
-            familiarization_day +
-            unique.group,
-            data   = dat)
+```{r}
+contr = lmerControl(optCtrl = list(maxfun = 10000000),
+                    calc.derivs = FALSE)
+```
+
+```{r}
+mod <- lmer(log(latency.open.min) ~
+              # test predictors
+              location.box * familiarization_day + 
+              # control predictor
+              group.daily.test.order + 
+              # random/nested factor
+              (1|unique.group),
+            # data set
+            data = dat,
+            REML = TRUE,
+            # numerical optimizer
+            control = contr)
 ```
 
 ## Run reduced model
 
-```{r, model-reduced}
-mod.red <-lm(sqrt(lat.first.open.sec) ~ 
-            unique.group,
-            data   = dat)
+-   without `familiarization_day`
+
+```{r}
+mod.red <- lmer(log(latency.open.min) ~
+                  # no test predictors
+                  # control predictor
+                  group.daily.test.order + 
+                  # random/nested factor
+                  (1|unique.group),
+                # data set
+                data = dat,
+                REML = TRUE,
+                # numerical optimizer
+                control = contr)
 ```
 
 ## Model comparison
 
-```{r, model-comp}
-anova(mod.red, mod, test="F")
+```{r}
+anova(update(mod.red, REML = FALSE), update(mod, REML = FALSE), test = "Chisq")
 ```
 
 ## Summary of model
 
-```{r, model-summary}
+```{r}
 summary(mod)
 ```
 
--   with `car::Anova()` we calculate Deviance table and $F$ statistics, type II because of no interactions
-
-```{r, model-table}
-car::Anova(mod, type ="II", test.statistic = "F")
+```{r}
+car::Anova(mod, type ="II", test.statistic = "Chisq")
 ```
 
 ## Performance of model
 
 -   `performance` package used to check model assumptions
 
-```{r, model-perf, fig.height=10, fig.width=10, warning=FALSE}
+```{r, fig.height=25, fig.width=10, warning=FALSE }
 performance::check_model(mod)
 ```
 
 # Estimated Marginal Means and multiple comparisons
 
--   `emmeans` package to obtain the estimated marginal means (EMMs) for `familiarization_day`, as back-transformed estimates
+## Within comparisons
 
-```{r, emmeans}
+```{r}
 emm <- emmeans(mod, 
-               specs = pairwise ~ familiarization_day,
-               type = "response",
+               specs  = pairwise ~ location.box | familiarization_day,
+               type   = "response",
                adjust = "tukey")
 
-emm$emmeans
+emm
+```
 
-emm$contrasts
+```{r}
+emm <- emmeans(mod, 
+               specs  = pairwise ~ familiarization_day | location.box,
+               type   = "response",
+               adjust = "tukey")
+
+emm
 ```
 
 # Plot
 
 ## Compact letter display
 
-```{r, cld}
-cld <- multcomp::cld(emm$emmeans, Letters=letters) 
+```{r}
+cld <- multcomp::cld(emm$emmeans, Letters=letters)
 cld$.group <- str_replace_all(cld$.group, fixed(" "), "")
+
+cld <- as_tibble(cld) %>% 
+  arrange(familiarization_day,
+          location.box)
+
+cld
 ```
 
-```{r, plot-1}
+-   only put emmeans ans letters next to "side compartment"
+
+```{r}
+cld <- cld %>% 
+  filter(location.box == "Side")
+```
+
+## Plot with emmeans
+
+```{r}
+# prepare x-position of emmeans (only side compartment)
+cld$xpos   <- c(1.3, 2.3, 3.3, 4.3, 5.3)
+cld$xpos.l <- c(1.4, 2.4, 3.4, 4.4, 5.4)
+
 plot <- dat %>%
   ggplot() +
-  geom_boxplot(aes(x = familiarization_day, 
-                   y = lat.first.open.sec), 
-               outlier.shape = NA, width = 0.5) +
-  geom_jitter(aes(x = familiarization_day, 
-                  y = lat.first.open.sec, 
-                  col = unique.group), 
-              size = 3, width = 0.15, alpha = 0.7) +
-  scale_colour_viridis_d("Social group")+
-  scale_y_continuous(lim = c(0, 85), breaks = seq(0, 85, 20)) +
-  #scale_x_discrete(labels= xlabs) +
+  geom_boxplot(aes(x   = familiarization_day, 
+                   y   = latency.open.min,
+                   col = location.box), 
+               outlier.shape = NA, width = 0.5, show.legend = FALSE) +
+  geom_jitter(aes(x     = familiarization_day, 
+                  y     = latency.open.min, 
+                  col   = location.box,
+                  shape = location.box),
+              position = position_jitterdodge(jitter.width = 0.1,
+                                              dodge.width  = 0.5),
+              size = 3, alpha = 0.7) +
+  scale_colour_manual(labels = c("Front compartment",
+                                 "Side compartment"),
+                      values = c("royalblue1", "royalblue4"))+
+  scale_shape_manual(labels = c("Front compartment",
+                                "Side compartment"),
+                     values = c(17, 19)) +
+  scale_y_continuous(lim = c(0, 8), breaks = seq(0, 8, 2)) +
+  scale_x_discrete() +
   geom_point(data=cld, col="black", size=3,
-             aes(x=as.numeric(familiarization_day)+0.35, y=response)) +
-  geom_errorbar(data=cld, col="black", width=0.1,
-                aes(x=as.numeric(familiarization_day)+0.35,
-                    ymin=response - SE, ymax=response + SE)) +
+             aes(x=xpos, y=response)) +
+  geom_errorbar(data=cld, col="black", width=0.08,
+                aes(x=xpos,
+                    ymin=response-SE, ymax=response+SE)) +
   geom_text(data=cld, col="black",
-            aes(y=response, x=as.numeric(familiarization_day)+0.45, 
-                label=.group, hjust = 0)) +
+            aes(y=response, x=xpos.l, label=.group, hjust = 0)) +
   labs(x = "Familiarization day",
-       y = "Time to first open door (sec)") +
+       y = "Latency to first open door (min)") +
   my_theme +
-  theme(legend.position = "none")
+  # theme(legend.position = c(0.8, 0.9),
+  #       legend.text     = element_text(size = 12)) +
+  theme(legend.justification = c(1.0, 0.9),
+        legend.position      = c(1.0, 0.9),
+        legend.background = element_rect(fill     = NA,
+                                         colour   = "black",
+                                         size     = 0.3,
+                                         linetype = "solid"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12)) +
+  guides(shape = guide_legend(override.aes = list(alpha = 1,
+                                                  size  = 4)))
 ```
 
 ```{r, plot-2, fig.height=10, fig.width=10, warning=FALSE}
@@ -167,21 +223,19 @@ plot
 
 Reference: R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
-```{r, cite-r}
+```{r}
 citation()
 version$version.string
 ```
 
-```{r, cite-packages}
+```{r}
 citation("tidyverse")
-citation("nlme") 
-citation("emmeans") 
-citation("performance")
-citation("viridis")
+citation("lmerTest")
+citation("emmeans")
 ```
 
 # Session Info
 
-```{r, session}
+```{r}
 sessionInfo()
 ```
