@@ -218,7 +218,7 @@ plot <- dat.pig %>%
                   y   = prob.helped, 
                   col = Box,
                   shape = Box),
-              position = position_jitterdodge(jitter.width  = 0.4,
+              position = position_jitterdodge(jitter.width  = 0.15,
                                               dodge.width   = 0.5),
               size = 3, alpha = 0.7) +
   scale_colour_manual(labels = c("Empty compartment",

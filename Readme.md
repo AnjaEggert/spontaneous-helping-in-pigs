@@ -1,3 +1,8 @@
+---
+output:
+  word_document: default
+  html_document: default
+---
 # Spontaneous-helping-in-pigs
 
 This repository contains data and source code to reproduce the data and statistical analysis and figures in the manuscript:

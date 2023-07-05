@@ -59,9 +59,9 @@ plot <- dat %>%
                  y     = lat.helped.min,
                  col   = id.group,
                  shape = helper),
-             position = position_jitterdodge(jitter.width  = 0.9,
+             position = position_jitterdodge(jitter.width  = 0.15,
                                              jitter.height = 0.0,
-                                             dodge.width   = 0.5),
+                                             dodge.width   = 0.2),
              size = 3, alpha = 0.5) +
   # only legend for helped = yes
   scale_shape_manual(values = c(17, 19),
