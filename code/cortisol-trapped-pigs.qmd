@@ -1,5 +1,5 @@
 ---
-title: "Revision: Pre- and post-cortisol and distress"
+title: "Behavioral responses to being trapped and changes in cortisol in trapped pigs"
 author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
 date: "`r Sys.Date()`" 
 editor: visual
@@ -11,14 +11,14 @@ self-contained: true
 
 # Libraries
 
-```{r, warning=FALSE, message=FALSE, echo=TRUE}
+```{r, libraries, warning=FALSE, message=FALSE, echo=TRUE}
 library(tidyverse)     # tidy universe
 library(lmerTest)      # mixed model lme4 with p-values
 library(emmeans)       # emmeans
 library(ggpubr)        # special ggplots
 ```
 
-```{r, echo = FALSE}
+```{r, my_theme, echo = FALSE}
 my_theme = theme_classic() +
   theme(axis.title = element_text(face="bold", size=14),
         axis.text  = element_text(size=12, angle = 0, vjust = 0.5),
@@ -27,38 +27,48 @@ my_theme = theme_classic() +
         panel.grid.minor = element_blank())
 ```
 
-```{r}
+```{r, seed}
 set.seed(1989)
 ```
 
-# Read data
+# Data
 
-```{r, warning = FALSE}
+## Read data
+
+```{r, data}
 dat <- read_csv("../data/cortisol-trapped-pigs.csv")
 ```
 
 ## Adjust data types
 
-```{r}
+```{r, data-adj}
 dat <- dat %>% 
   mutate_at(vars(test.day,
                  daily.test.order.within.group), ~as.factor(.))
+```
+
+## Data summary
+
+```{r, data-sum}
+dat %>% 
+  rstatix::get_summary_stats(c(cort), 
+                             show = c("mean", "sd", "min", "max", "median", "iqr"))
 ```
 
 # Linear mixed model
 
 ## Run full model
 
-```{r}
+```{r, mod-cont}
 contr = lmerControl(optCtrl = list(maxfun = 10000000),
                     calc.derivs = FALSE)
 ```
 
-```{r}
+```{r, mod}
 mod <- lmer(sqrt(cort) ~ 
               # test predictors
               context*as.vector(scale(sqrt(distress.rate)))+ 
-              context*invest.sq.z + 
+              context*as.vector(scale(sqrt(invest.window.rate)))+ 
               context*as.vector(scale(sqrt(dur.separated))) + 
               context*as.vector(scale(log(dur.trapped.min))) +  
               # control predictors
@@ -76,7 +86,7 @@ mod <- lmer(sqrt(cort) ~
 
 ## Run reduced model
 
-```{r}
+```{r, mod-red}
 mod.red <- lmer(sqrt(cort) ~ 
               # no test predictors
               # control predictors
@@ -94,40 +104,30 @@ mod.red <- lmer(sqrt(cort) ~
 
 ## Model comparison
 
--   full model is significantly better than reduced model
-
-```{r}
+```{r, mod-anova}
 anova(update(mod.red, REML = FALSE), update(mod, REML = FALSE), test = "Chisq")
 ```
 
 ## Summary of model
 
-```{r}
+```{r, mod-sum-1}
 summary(mod)
 ```
 
-```{r}
-car::Anova(mod, type ="II", test.statistic = "Chisq")
-```
-
-```{r}
+```{r, mod-sum-2}
 round(drop1(mod,test='Chisq'),3)
 as.data.frame(round(confint(object=mod),3)) 
 ```
 
 ## Performance of model
 
--   `performance` package used to check model assumptions
-
-```{r, fig.height=25, fig.width=10, warning=FALSE }
+```{r, mod-perf, fig.height=25, fig.width=10, warning=FALSE }
 performance::check_model(mod)
 ```
 
 # Plot
 
--   make wide data table for ggpaired-plot
-
-```{r}
+```{r, dat-plot}
 dat.plot <- dat %>% 
   select(cort, context, distress.rate) %>% 
   mutate(distress.cat = case_when(distress.rate < 1 ~ "low",
@@ -143,7 +143,7 @@ dat.plot <- dat %>%
 dat.plot$distress.cat <- factor(dat.plot$distress.cat, levels = c("low", "high"))
 ```
 
-```{r, fig.height=10, fig.width=10, warning=FALSE}
+```{r, plot-1}
 plot <- dat.plot %>% 
   ggpaired(cond1="pre", 
            cond2="post",
@@ -167,7 +167,7 @@ plot <- dat.plot %>%
         legend.position = "none")
 ```
 
-```{r}
+```{r, plot-2}
 plot
 ```
 
@@ -177,12 +177,12 @@ plot
 
 Reference: R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
-```{r}
+```{r, cite-r}
 citation()
 version$version.string
 ```
 
-```{r}
+```{r, cite-packages}
 citation("tidyverse")
 citation("lmerTest")
 citation("emmeans")
@@ -191,6 +191,6 @@ citation("ggpubr")
 
 # Session Info
 
-```{r}
+```{r, session}
 sessionInfo()
 ```

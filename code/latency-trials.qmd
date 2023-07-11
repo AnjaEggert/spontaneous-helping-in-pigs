@@ -1,5 +1,5 @@
 ---
-title: "Effect of trial order on latency to open door of testbox"
+title: "Plot of latencies to open the door of the test compartment to release the trapped pig"
 author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
 date: "`r Sys.Date()`" 
 editor: visual
@@ -11,12 +11,12 @@ self-contained: true
 
 # Libraries
 
-```{r, warning=FALSE, message=FALSE, echo=TRUE}
+```{r, libraries, warning=FALSE, message=FALSE, echo=TRUE}
 library(tidyverse)     # tidy universe
 library(viridis)       # viridis colours
 ```
 
-```{r, echo = FALSE}
+```{r, my_theme, echo = FALSE}
 my_theme = theme_classic() +
   theme(axis.title = element_text(face="bold", size=14),
         axis.text  = element_text(size=12, angle = 0, vjust = 0.5),
@@ -25,36 +25,46 @@ my_theme = theme_classic() +
         panel.grid.minor = element_blank())
 ```
 
-```{r}
+```{r, seed}
 set.seed(1989)
 ```
 
-# Task
+# Data
 
-Test for effect of trial order on latency to open door, for test box and empty box.
+## Read data
 
-# Read data
-
-```{r, warning = FALSE}
+```{r, data, warning = FALSE}
 dat <- read_csv("../data/latency-trials.csv")
 ```
 
-# Adjust data types
+## Adjust data types
 
-```{r}
+```{r, data-adj}
 dat <- dat %>% 
   mutate_at(vars(trapped.order), ~as.factor(.))
 ```
 
+## Data summary
+
+```{r, data-sum}
+dat %>% 
+  filter( helper == "Pig") %>% 
+  group_by(trapped.order)%>%
+  rstatix::get_summary_stats(c(lat.helped.min), 
+                             show = c("mean", "sd", "min", "max", "median", "iqr")) %>% 
+  ungroup()
+```
+
 # Plot
 
-```{r}
+```{r, plot-1}
 plot <- dat %>%
   ggplot() +
   geom_boxplot(data = subset(dat, helper == "Pig"),
                aes(x = trapped.order, 
                    y = lat.helped.min),
-               outlier.shape = NA, width = 0.5, col = "orchid", show.legend = FALSE) +
+               outlier.shape = NA, width = 0.5, col = "orchid", 
+               show.legend = FALSE) +
   geom_point(aes(x     = trapped.order, 
                  y     = lat.helped.min,
                  col   = id.group,
@@ -63,30 +73,28 @@ plot <- dat %>%
                                              jitter.height = 0.0,
                                              dodge.width   = 0.2),
              size = 3, alpha = 0.5) +
-  # only legend for helped = yes
   scale_shape_manual(values = c(17, 19),
-                     labels = c("Pig released by human", "")) +
+                     labels = c("Pig released by human", 
+                                "Pig released by helper")) +
   scale_color_manual(values = viridis(n=8),
                      guide="none") +
   scale_y_continuous(lim = c(0, 20.01), breaks = seq(0, 20, 5)) +
   labs(x = "Test trial",
-       y = "Latency to first open door (min)",
-       shape = "") +
+       y = "Latency to first open door (min)") +
   my_theme +
-  # change only the legend appearance without affecting the plot
-  # increase symbol size, remove symbol for pig
   guides(shape = guide_legend(override.aes = list(size  = 4,
-                                                  shape = c(17, NA)))) +
-  # legend position: c(0,0) “bottom left” and c(1,1) “top right”
-  # legend appearance
+                                                  shape = c(17, 19)))) +
   theme(legend.justification = c(1,0.6),
         legend.position = c(1,0.6),
-        legend.background = element_rect(fill = NA, colour ="black",
-                                         size=0.3, linetype="solid"),
+        legend.background = element_rect(fill = NA,
+                                         colour ="black",
+                                         size=0.3,
+                                         linetype="solid"),
+        legend.title = element_blank(),
         legend.text = element_text(size=12))
 ```
 
-```{r, fig.height=10, fig.width=10, warning=FALSE}
+```{r, plot-2, fig.height=10, fig.width=10, warning=FALSE}
 plot
 ```
 
@@ -96,18 +104,18 @@ plot
 
 Reference: R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
-```{r}
+```{r, cite-r}
 citation()
 version$version.string
 ```
 
-```{r}
+```{r, cite-packages}
 citation("tidyverse")
 citation("viridis")
 ```
 
 # Session Info
 
-```{r}
+```{r, session}
 sessionInfo()
 ```

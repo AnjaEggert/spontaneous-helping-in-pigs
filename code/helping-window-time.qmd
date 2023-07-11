@@ -1,5 +1,5 @@
 ---
-title: "Likelihood of helping and window time"
+title: "Influences on the likelihood of helping"
 author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
 date: "`r Sys.Date()`" 
 editor: visual
@@ -16,7 +16,6 @@ library(tidyverse)     # tidy universe
 library(viridis)       # color scale
 library(glmmTMB)       # neg. binomial model
 library(performance)   # testZeroInflation()
-library(DHARMa)        # model diagnostics
 library(fastDummies)   # dummy-coding
 ```
 
@@ -35,21 +34,33 @@ set.seed(1989)
 
 # Data
 
-Likelihood of helping of the potential helper and the attentiveness to trapped pigs.
-
-# Read data
+## Read data
 
 ```{r, data}
 dat <- read_csv("../data/helping-window-time.csv")
 ```
 
-# Adjust data types
+## Adjust data types
 
-```{r}
+```{r, data-adj}
 dat <- dat %>% 
   mutate_at(vars(daily.test.order.within.group,
                  Test_subj.opens.emptybox.to20,
                  test.day), ~as.factor(.))
+```
+
+## Data summary
+
+```{r, data-sum}
+dat %>% 
+  group_by(pot.helper.uniq.id)%>%
+  summarise(mean.look.min = mean(prop.look.test.window),
+            mean.help     = mean(Test_subj.opens.testbox),
+            n_trials      = n()) %>% 
+  ungroup() %>% 
+  mutate(uniq.group = str_sub(pot.helper.uniq.id,1,5)) %>%
+  rstatix::get_summary_stats(c(mean.look.min, mean.help), 
+                             show = c("mean", "sd", "min", "max", "median", "iqr"))
 ```
 
 # Zero-inflated negative binomial model
@@ -58,14 +69,14 @@ The zero-inflation model describes the probability of observing an extra (i.e., 
 
 ## Run full model
 
-```{r, model-contr}
+```{r, mod-cont}
 contr = glmmTMBControl(optimizer = optim, optArgs = list(method="BFGS"))
 ```
 
-```{r, model-full}
+```{r, mod}
 mod <- glmmTMB(Test_subj.opens.testbox ~
                  # fixed, continuous predictors
-                 as.vector(scale(sqrt(train.rate.open.anybox)))+
+                 as.vector(scale(sqrt(famil.rate.open.anybox)))+
                  as.vector(scale(Sep_rate.open.anybox))+
                  as.vector(scale(rate.look.testwindow.s.per.min))+
                  as.vector(scale(rate.look.emptywindow.s.per.min))+
@@ -88,7 +99,7 @@ mod <- glmmTMB(Test_subj.opens.testbox ~
 
 ## Run reduced model
 
-```{r, model-reduced}
+```{r, mod-red}
 mod.red <- glmmTMB(Test_subj.opens.testbox ~
                  # fixed, continuous predictors
                  as.vector(scale(Sep_rate.open.anybox))+
@@ -114,47 +125,35 @@ mod.red <- glmmTMB(Test_subj.opens.testbox ~
 
 -   Likelihood ratio test compares goodness of fit of of the reduced and the full model, *i.e.*, determine whether or not adding complexity (adding more parameters) makes the full model significantly more accurate
 
-```{r, model-comp}
+```{r, mod-anova}
 anova(mod.red, mod, test='Chisq')
 ```
 
 ## Summary of model
 
-```{r, model-summary}
+```{r, mod-sum-1}
 summary(mod)
 ```
 
-```{r, model-table}
-car::Anova(mod)
+```{r, mod-sum-2}
+as.data.frame(round(confint(object=mod),3))
 ```
 
 ## Performance of model
 
--   `performance` package used to check model assumptions
-
-```{r, perf-1}
+```{r, mod-perf-1}
 performance::check_collinearity(mod)
 ```
 
-```{r, perf-2}
+```{r, mod-perf-2}
 performance::check_overdispersion(mod)
-```
-
--   `DHARMa` package used to test for zero-inflation, which compares the distribution of expected zeros from simulations against the observed zeros
-
-```{r, perf-3}
-DHARMa::testZeroInflation(mod)
 ```
 
 # Plot
 
--   fit an additional **plot.model** with all predictors except the predictor of interest having a mean of zero
-
 ## Dummy-coding
 
--   using `fastDummies` to dummy-code categorical predictors, continuous predictors are z-transformed
-
-```{r, dummy-code}
+```{r,data-dum}
 dat.dum <- fastDummies::dummy_cols(dat,
                                    select_columns = c(
                                      "test.day", 
@@ -175,10 +174,10 @@ dat.dum <- fastDummies::dummy_cols(dat,
 
 ## Run plot model
 
-```{r, plot-model}
+```{r, mod-plot}
 plot.mod <- glmmTMB(Test_subj.opens.testbox ~
                       # fixed, continuous predictors
-                      as.vector(scale(sqrt(train.rate.open.anybox)))+
+                      as.vector(scale(sqrt(famil.rate.open.anybox)))+
                       as.vector(scale(Sep_rate.open.anybox))+
                       # no scaling and converted to proportion for figure
                       prop.look.test.window + 
@@ -205,11 +204,7 @@ plot.mod <- glmmTMB(Test_subj.opens.testbox ~
 
 ## Extract fixed effects
 
--   create a vector spanning the range of `prop.look.test.window`
--   get fitted/estimated values for negative binomial part and zero-inflated part, with `fixef()`
--   as the fitted values are in the logit-link space, they need to be transformed into the space of the measurements
-
-```{r, fixed-eff}
+```{r, mod-fix-eff}
 coeff.fixed <- fixef(plot.mod)
 coeff.ci <- confint(plot.mod)
 
@@ -243,8 +238,6 @@ plot.line <- tibble(xvals, yvals, yvals.l, yvals.h) %>%
 ```
 
 ## Plot it
-
--   group by `pot.helper.uniq.id` and calculate the mean of `prop.look.test.window` and `Test_subj.opens.testbox`
 
 ```{r, plot-1}
 plot <- dat.dum %>% 
@@ -309,7 +302,6 @@ citation("tidyverse")
 citation("viridis")
 citation("glmmTMB")
 citation("performance")
-citation("DHARMa")
 citation("fastDummies")
 ```
 

@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Liza Moscovice, Anja Eggert and Jean-Loup Rault">
-<meta name="dcterms.date" content="2023-06-29">
+<meta name="dcterms.date" content="2023-07-10">
 
-<title>Testing for side preference for a box</title>
+<title>Testing for a location preference for opening compartments (at front or side of pen)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -2835,7 +2835,10 @@ border: 0;
    
   <ul>
   <li><a href="#libraries" id="toc-libraries" class="nav-link active" data-scroll-target="#libraries">Libraries</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a>
+  <ul class="collapse">
   <li><a href="#read-data" id="toc-read-data" class="nav-link" data-scroll-target="#read-data">Read data</a></li>
+  </ul></li>
   <li><a href="#binomial-test" id="toc-binomial-test" class="nav-link" data-scroll-target="#binomial-test">Binomial test</a>
   <ul class="collapse">
   <li><a href="#across-familiarization-day" id="toc-across-familiarization-day" class="nav-link" data-scroll-target="#across-familiarization-day">Across familiarization day</a></li>
@@ -2851,7 +2854,7 @@ border: 0;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Testing for side preference for a box</h1>
+<h1 class="title">Testing for a location preference for opening compartments (at front or side of pen)</h1>
 </div>
 
 
@@ -2868,7 +2871,7 @@ border: 0;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 29, 2023</p>
+      <p class="date">July 10, 2023</p>
     </div>
   </div>
   
@@ -2883,15 +2886,17 @@ border: 0;
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)    <span class="co"># html tables</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)     <span class="co"># tidy universe</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstatix)       <span class="co"># pipe friendly binom_test()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstatix)       <span class="co"># binom_test()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="read-data" class="level1">
-<h1>Read data</h1>
+<section id="data" class="level1">
+<h1>Data</h1>
+<section id="read-data" class="level2">
+<h2 class="anchored" data-anchor-id="read-data">Read data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../data/side-preference-box.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Rows: 535 Columns: 8
+<pre><code>Rows: 534 Columns: 8
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: &quot;,&quot;
 chr (4): unique.group, group.test.order, pig.unique.id, location.box
@@ -2902,12 +2907,11 @@ dbl (4): familiarization.day, number.times.opens, rate.open.per.min, dur.tri...
 </div>
 </div>
 </section>
+</section>
 <section id="binomial-test" class="level1">
 <h1>Binomial test</h1>
-<p>A binomial test compares a sample proportion to a hypothesized proportion.</p>
 <section id="across-familiarization-day" class="level2">
 <h2 class="anchored" data-anchor-id="across-familiarization-day">Across familiarization day</h2>
-<p>Outcomes (front or side) are equally distributed when summarized per familiarization day.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(familiarization.day, location.box) <span class="sc">%&gt;%</span> </span>
@@ -2947,9 +2951,9 @@ using the `.groups` argument.</code></pre>
   <tr>
    <td style="text-align:right;"> 1 </td>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 155 </td>
+   <td style="text-align:right;"> 154 </td>
    <td style="text-align:right;"> 150 </td>
-   <td style="text-align:right;"> 0.8188847 </td>
+   <td style="text-align:right;"> 0.8634251 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 2 </td>
@@ -2987,7 +2991,6 @@ using the `.groups` argument.</code></pre>
 </section>
 <section id="across-individual-pigs" class="level2">
 <h2 class="anchored" data-anchor-id="across-individual-pigs">Across individual pigs</h2>
-<p>Outcomes (front or side) are equally distributed in all but 4 individual pigs. Those with not equal outcomes are DG2_F_7 (Front:2, Side: 17), DG4_W_8 (Front:2, Side: 12), DG3_W_7 (Front:7, Side: 20), DG5_W_9 (Front:12, Side: 3).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(pig.unique.id, location.box) <span class="sc">%&gt;%</span> </span>
@@ -3551,13 +3554,6 @@ using the `.groups` argument.</code></pre>
    <td style="text-align:right;"> 6 </td>
    <td style="text-align:right;"> 1.0000000 </td>
   </tr>
-  <tr>
-   <td style="text-align:right;"> 76 </td>
-   <td style="text-align:left;"> DG5___W </td>
-   <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1.0000000 </td>
-  </tr>
 </tbody>
 </table></div>
 
@@ -3566,7 +3562,6 @@ using the `.groups` argument.</code></pre>
 </section>
 <section id="across-social-groups" class="level2">
 <h2 class="anchored" data-anchor-id="across-social-groups">Across social groups</h2>
-<p>Outcomes (front or side) are equally distributed when summarized per group.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(unique.group, location.box) <span class="sc">%&gt;%</span> </span>
@@ -3642,17 +3637,17 @@ using the `.groups` argument.</code></pre>
   </tr>
   <tr>
    <td style="text-align:right;"> 6 </td>
-   <td style="text-align:left;"> DG5_W </td>
-   <td style="text-align:right;"> 88 </td>
-   <td style="text-align:right;"> 84 </td>
-   <td style="text-align:right;"> 0.8191473 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 7 </td>
    <td style="text-align:left;"> DG3_F </td>
    <td style="text-align:right;"> 75 </td>
    <td style="text-align:right;"> 78 </td>
    <td style="text-align:right;"> 0.8716178 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 7 </td>
+   <td style="text-align:left;"> DG5_W </td>
+   <td style="text-align:right;"> 87 </td>
+   <td style="text-align:right;"> 84 </td>
+   <td style="text-align:right;"> 0.8785005 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 8 </td>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Liza Moscovice, Anja Eggert and Jean-Loup Rault">
-<meta name="dcterms.date" content="2023-06-29">
+<meta name="dcterms.date" content="2023-07-10">
 
 <title>Cortisol in matched helper and trapped pigs</title>
 <style>
@@ -2613,6 +2613,7 @@ vertical-align: -.125em;
   <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a>
   <ul class="collapse">
   <li><a href="#read-data" id="toc-read-data" class="nav-link" data-scroll-target="#read-data">Read data</a></li>
+  <li><a href="#adjust-data-types" id="toc-adjust-data-types" class="nav-link" data-scroll-target="#adjust-data-types">Adjust data types</a></li>
   <li><a href="#data-summary" id="toc-data-summary" class="nav-link" data-scroll-target="#data-summary">Data summary</a></li>
   </ul></li>
   <li><a href="#paired-t-test" id="toc-paired-t-test" class="nav-link" data-scroll-target="#paired-t-test">Paired t-test</a></li>
@@ -2644,7 +2645,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 29, 2023</p>
+      <p class="date">July 10, 2023</p>
     </div>
   </div>
   
@@ -2671,7 +2672,6 @@ vertical-align: -.125em;
 </section>
 <section id="data" class="level1">
 <h1>Data</h1>
-<p>Comparison of post-release salivary cortisol in trapped pigs and their helpers for a subset of n = 50 trials.</p>
 <section id="read-data" class="level2">
 <h2 class="anchored" data-anchor-id="read-data">Read data</h2>
 <div class="cell">
@@ -2689,18 +2689,22 @@ date (1): date
 </div>
 </div>
 </section>
+<section id="adjust-data-types" class="level2">
+<h2 class="anchored" data-anchor-id="adjust-data-types">Adjust data types</h2>
+<p>none</p>
+</section>
 <section id="data-summary" class="level2">
 <h2 class="anchored" data-anchor-id="data-summary">Data summary</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  rstatix<span class="sc">::</span><span class="fu">get_summary_stats</span>(<span class="fu">c</span>(cort_potential_helper, cort_trapped), </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">type =</span> <span class="st">&quot;common&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">show =</span> <span class="fu">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;sd&quot;</span>, <span class="st">&quot;min&quot;</span>, <span class="st">&quot;max&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;iqr&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 10
-  variable                  n   min   max median   iqr  mean    sd    se    ci
-  &lt;fct&gt;                 &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 cort_potential_helper    50  1.04  10.4   3.59  2.15  3.86  1.9  0.269 0.54 
-2 cort_trapped             50  2.51  13.1   7.14  3.44  7.27  2.41 0.341 0.685</code></pre>
+<pre><code># A tibble: 2 × 8
+  variable                  n  mean    sd   min   max median   iqr
+  &lt;fct&gt;                 &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1 cort_potential_helper    50  3.86  1.9   1.04  10.4   3.59  2.15
+2 cort_trapped             50  7.27  2.41  2.51  13.1   7.14  3.44</code></pre>
 </div>
 </div>
 </section>
@@ -2871,12 +2875,31 @@ Ein BibTeX-Eintrag für LaTeX-Benutzer ist
     url = {https://CRAN.R-project.org/package=ggpubr},
   }</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;rstatix&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Um Paket &#39;rstatix&#39; in Publikationen zu zitieren, nutzen Sie bitte:
+
+  Kassambara A (2023). _rstatix: Pipe-Friendly Framework for Basic
+  Statistical Tests_. R package version 0.7.2,
+  &lt;https://CRAN.R-project.org/package=rstatix&gt;.
+
+Ein BibTeX-Eintrag für LaTeX-Benutzer ist
+
+  @Manual{,
+    title = {rstatix: Pipe-Friendly Framework for Basic Statistical Tests},
+    author = {Alboukadel Kassambara},
+    year = {2023},
+    note = {R package version 0.7.2},
+    url = {https://CRAN.R-project.org/package=rstatix},
+  }</code></pre>
+</div>
 </div>
 </section>
 <section id="session-info" class="level1">
 <h1>Session Info</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.2.0 (2022-04-22 ucrt)
 Platform: x86_64-w64-mingw32/x64 (64-bit)

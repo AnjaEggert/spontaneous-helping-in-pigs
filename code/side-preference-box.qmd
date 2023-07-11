@@ -1,5 +1,5 @@
 ---
-title: "Testing for side preference for a box"
+title: "Testing for a location preference for opening compartments (at front or side of pen)"
 author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
 date: "`r Sys.Date()`" 
 editor: visual
@@ -11,27 +11,25 @@ self-contained: true
 
 # Libraries
 
-```{r, warning=FALSE, message=FALSE, echo=TRUE}
+```{r, libraries, warning=FALSE, message=FALSE, echo=TRUE}
 library(kableExtra)    # html tables
 library(tidyverse)     # tidy universe
-library(rstatix)       # pipe friendly binom_test()
+library(rstatix)       # binom_test()
 ```
 
-# Read data
+# Data
 
-```{r, warning = FALSE}
+## Read data
+
+```{r, data, warning = FALSE}
 dat <- read_csv("../data/side-preference-box.csv")
 ```
 
 # Binomial test
 
-A binomial test compares a sample proportion to a hypothesized proportion.
-
 ## Across familiarization day
 
-Outcomes (front or side) are equally distributed when summarized per familiarization day.
-
-```{r}
+```{r, binom-test-1}
 dat %>% 
   group_by(familiarization.day, location.box) %>% 
   summarize(nto = sum(number.times.opens)) %>% 
@@ -53,9 +51,7 @@ dat %>%
 
 ## Across individual pigs
 
-Outcomes (front or side) are equally distributed in all but 4 individual pigs. Those with not equal outcomes are DG2_F\_7 (Front:2, Side: 17), DG4_W\_8 (Front:2, Side: 12), DG3_W\_7 (Front:7, Side: 20), DG5_W\_9 (Front:12, Side: 3).
-
-```{r}
+```{r, binom-test-2}
 dat %>% 
   group_by(pig.unique.id, location.box) %>% 
   summarize(nto = sum(number.times.opens)) %>% 
@@ -79,9 +75,7 @@ dat %>%
 
 ## Across social groups
 
-Outcomes (front or side) are equally distributed when summarized per group.
-
-```{r}
+```{r, binom-test-3}
 dat %>% 
   group_by(unique.group, location.box) %>% 
   summarize(nto = sum(number.times.opens)) %>% 
@@ -109,12 +103,12 @@ dat %>%
 
 Reference: R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
-```{r}
+```{r, cite-r}
 citation()
 version$version.string
 ```
 
-```{r}
+```{r, cite-packages}
 citation("tidyverse")
 citation("kableExtra")
 citation("rstatix")
@@ -122,6 +116,6 @@ citation("rstatix")
 
 # Session Info
 
-```{r}
+```{r, session}
 sessionInfo()
 ```

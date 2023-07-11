@@ -33,20 +33,22 @@ set.seed(1989)
 
 # Data
 
-Comparison of post-release salivary cortisol in trapped pigs and their helpers for a subset of n = 50 trials.
-
 ## Read data
 
 ```{r, data}
 dat <- read_csv("../data/cortisol-helper-trapped.csv")
 ```
 
+## Adjust data types
+
+none
+
 ## Data summary
 
 ```{r, data-sum}
 dat %>% 
   rstatix::get_summary_stats(c(cort_potential_helper, cort_trapped), 
-                             type = "common")
+                             show = c("mean", "sd", "min", "max", "median", "iqr"))
 ```
 
 # Paired t-test
@@ -103,6 +105,7 @@ version$version.string
 citation("tidyverse")
 citation("viridis")
 citation("ggpubr")
+citation("rstatix")
 ```
 
 # Session Info

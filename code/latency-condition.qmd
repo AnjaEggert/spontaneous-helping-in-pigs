@@ -11,13 +11,13 @@ self-contained: true
 
 # Libraries
 
-```{r, warning=FALSE, message=FALSE, echo=TRUE}
+```{r, libraries, warning=FALSE, message=FALSE, echo=TRUE}
 library(tidyverse)     # tidy universe
 library(lmerTest)      # mixed model lme4 with p-values
 library(emmeans)       # emmeans
 ```
 
-```{r, echo = FALSE}
+```{r, my_theme, echo = FALSE}
 my_theme = theme_classic() +
   theme(axis.title = element_text(face="bold", size=14),
         axis.text  = element_text(size=12, angle = 0, vjust = 0.5),
@@ -26,36 +26,46 @@ my_theme = theme_classic() +
         panel.grid.minor = element_blank())
 ```
 
-```{r}
+```{r, seed}
 set.seed(1989)
 ```
 
-# Read data
+# Data
 
-```{r, warning = FALSE}
+## Read data
+
+```{r, data, warning = FALSE}
 dat <- read_csv("../data/latency-condition.csv")
 ```
 
-# Adjust data types
+## Adjust data types
 
-```{r}
+```{r, data-adj}
 dat <- dat %>% 
   mutate_at(vars(test.day,
                  daily.test.order.within.group), ~as.factor(.))
 ```
 
-# Linear mixed model
+## Data summary
 
-Test whether latencies are different when opening compartments during test trials, when a pig was trapped in the test compartment, and during the preceding separation, when both compartments were empty.
+```{r, data-sum}
+dat %>% 
+  group_by(condition, identity.box.first.opened)%>%
+  rstatix::get_summary_stats(c(lat.first.open.min), 
+                             show = c("mean", "sd", "min", "max", "median", "iqr")) %>% 
+  ungroup()
+```
+
+# Linear mixed model
 
 ## Run full model
 
-```{r}
+```{r, mod-cont}
 contr = lmerControl(optCtrl = list(maxfun=10000000),
                     calc.derivs = FALSE)
 ```
 
-```{r}
+```{r, mod}
 mod <- lmer(log(lat.first.open.min) ~
               # test predictors
               condition*identity.box.first.opened + 
@@ -67,14 +77,14 @@ mod <- lmer(log(lat.first.open.min) ~
               (1|group.id),
             # data set
             data    = dat,
-            REML    = FALSE,
+            REML    = TRUE,
             # numerical optimizer
             control = contr)
 ```
 
 ## Run reduced model
 
-```{r}
+```{r, mod-red}
 mod.red <- lmer(log(lat.first.open.min) ~
               # no test predictors
               # control predictor
@@ -85,32 +95,31 @@ mod.red <- lmer(log(lat.first.open.min) ~
               (1|group.id),
             # data set
             data    = dat,
-            REML    = FALSE,
+            REML    = TRUE,
             # numerical optimizer
             control = contr)
 ```
 
 ## Model comparison
 
-```{r}
-anova(mod.red, mod, test = "Chisq")
+```{r, mod-anova}
+anova(update(mod.red, REML = FALSE), update(mod, REML = FALSE), test = "Chisq")
 ```
 
 ## Summary of model
 
-```{r}
+```{r, mod-sum-1}
+summary(mod)
+```
+
+```{r, mod-sum-2}
 round(drop1(mod,test='Chisq'),3)
-
-round(summary(mod)$coefficients, 3)
-
 as.data.frame(round(confint(object=mod),3)) 
 ```
 
 ## Performance of model
 
--   `performance` package used to check model assumptions
-
-```{r, fig.height=25, fig.width=10, warning=FALSE }
+```{r, mod-perf, fig.height=25, fig.width=10, warning=FALSE }
 performance::check_model(mod)
 ```
 
@@ -118,7 +127,7 @@ performance::check_model(mod)
 
 ## All comparisons
 
-```{r}
+```{r, mod-emm-1}
 emm <- emmeans(mod, 
                specs  = pairwise ~ identity.box.first.opened * condition,
                type   = "response",
@@ -129,7 +138,7 @@ emm
 
 ## Simple comparisons
 
-```{r}
+```{r, mod-emm-2}
 emm <- emmeans(mod, 
                specs  = pairwise ~ identity.box.first.opened * condition,
                type   = "response",
@@ -141,7 +150,7 @@ simp
 
 ## Within comparisons
 
-```{r}
+```{r, mod-emm-3}
 emm <- emmeans(mod, 
                specs  = pairwise ~ identity.box.first.opened | condition,
                type   = "response",
@@ -156,16 +165,14 @@ emm$contrasts
 
 ## Compact letter display
 
--   we plot the emmeans of all pairwise comparisons
-
-```{r}
+```{r, mod-emm-4}
 emm <- emmeans(mod, 
                specs  = pairwise ~ identity.box.first.opened * condition,
                type   = "response",
                adjust = "tukey")
 ```
 
-```{r}
+```{r, mod-cld}
 cld <- multcomp::cld(emm$emmeans, Letters=letters)
 cld$.group <- str_replace_all(cld$.group, fixed(" "), "")
 
@@ -177,7 +184,7 @@ cld
 
 ## Plot with emmeans
 
-```{r}
+```{r, plot-1}
 # prepare x-position of emmeans
 cld$xpos   <- c(0.7, 1.3, 1.7, 2.3)
 cld$xpos.l <- c(0.55, 1.4, 1.55, 2.4)
@@ -238,12 +245,12 @@ plot
 
 Reference: R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
-```{r}
+```{r, cite-r}
 citation()
 version$version.string
 ```
 
-```{r}
+```{r, cite-packages}
 citation("tidyverse")
 citation("lmerTest")
 citation("emmeans")
@@ -251,6 +258,6 @@ citation("emmeans")
 
 # Session Info
 
-```{r}
+```{r, session}
 sessionInfo()
 ```

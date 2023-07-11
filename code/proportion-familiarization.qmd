@@ -30,8 +30,6 @@ set.seed(1989)
 
 # Data
 
-This data table contains the proportion of pigs that opened the door across 5 training days and the cumulative score.
-
 ## Read data
 
 ```{r, data, warning = FALSE}
@@ -40,32 +38,55 @@ dat <- read_csv("../data/proportion-familiarization.csv")
 
 ## Adjust data types
 
-```{r}
+```{r, data-adj}
 dat <- dat %>%
-  mutate_at(vars(familiarization_day,
-                 level), ~as.factor(.)) %>% 
-  mutate(level = relevel(level, "group"))
+  mutate_at(vars(type,
+                 condition,
+                 familiarization_day), ~as.factor(.))
+
+dat$type = factor(dat$type, levels = c("group", "cumulative"))
+```
+
+## Data summary
+
+```{r, data-sum}
+dat %>% 
+  filter(type == "group") %>% 
+  group_by(familiarization_day)%>%
+  rstatix::get_summary_stats(c(proportion),
+                             show = c("mean", "sd", "min", "max", "median", "iqr")) %>% 
+  ungroup()
 ```
 
 # Plots
 
 ```{r, plot-1}
 plot <- dat %>%
-  ggplot(aes(x    = familiarization_day,
-             col   = level,
-             shape = level)) +
-  geom_point(aes(y = prop),
+  ggplot() +
+  geom_boxplot(data = subset(dat, type == "group"),
+               aes(x     = familiarization_day,
+                   y     = proportion,
+                   col   = type,
+                   shape = type),
+               fill = NA, outlier.shape = NA, show.legend = FALSE,
+               width = 0.3, position = position_nudge(x = -0.05)) +
+  geom_point(data = subset(dat, type == "cumulative"),
+             aes(x     = familiarization_day,
+                 y     = proportion,
+                 col   = type,
+                 shape = type),
              size = 3,
-             position = position_dodge(width = 0.1)) +
-  geom_line(aes(y        = prop,
-                group    = level,
-                linetype = level),
-            position = position_dodge(width = 0.1)) +
-  geom_errorbar(aes(ymin = prop - group.sd,
-                    ymax = prop + group.sd),
-                width = 0.1,
-                position = position_dodge(width = 0.1)) +
-  scale_color_brewer(palette = "Set1")+
+             position = position_nudge(x = 0.0)) +
+  scale_shape_manual(name = "", labels = c("Cumulative", "Within each group"),
+                     values = c(16, 15)) +
+  scale_colour_manual(name = "", labels = c("Cumulative", "Within each group"),
+                      values = c("firebrick", "royalblue1")) +
+  geom_line(data = subset(dat, type == "cumulative"),
+            aes(x   = familiarization_day,
+                y     = proportion,
+                group = 1),
+            size = 1, linetype = "dashed", col = "firebrick",
+            position = position_nudge(x = 0.0)) +
   scale_y_continuous(lim = c(0, 1.05), breaks = seq(0, 1, 0.25)) +
   labs(x = "Familiarization day",
        y = "Proportion of pigs that open a door") +
@@ -77,9 +98,10 @@ plot <- dat %>%
                                          size     = 0.3,
                                          linetype = "solid"),
         legend.title = element_blank(),
-        legend.text = element_text(size = 12)) +
-  guides(shape = guide_legend(override.aes = list(alpha = 1,
-                                                  size  = 4)))
+        legend.text  = element_text(size = 12)) +
+  guides(shape  = guide_legend(override.aes = list(alpha = 1,
+                                                   size  = 4,
+                                                   shape = c(16, 15))))
 ```
 
 ```{r, plot-2, fig.height=10, fig.width=10, warning=FALSE}

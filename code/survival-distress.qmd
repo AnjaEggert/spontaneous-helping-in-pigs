@@ -1,5 +1,5 @@
 ---
-title: "Probability to be helped over time "
+title: "Influences on the likelihood and latency to be helped"
 author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
 date: "`r Sys.Date()`" 
 editor: visual
@@ -34,7 +34,7 @@ set.seed(1989)
 
 # Data
 
-Using survival analysis to analyse time to open door of trapped pigs. Data set contains time-resolved data of 58 trapped pigs.
+Using survival analysis to analyse time to open door for trapped pigs. Data set contains time-resolved data from 58 trapped pigs who were trapped for at least one minute.
 
 ## Read data
 
@@ -52,11 +52,9 @@ dat <- dat %>%
                  location.test.box,
                  uniq.group,
                  trapped.pig.uniq.id), ~as.factor(.)) %>% 
-  mutate(invest.window.sq.z        = as.vector(scale(sqrt(invest.window)))) %>% 
+  mutate(invest.window.sq.z        = as.vector(scale(sqrt(invest.window.num)))) %>% 
   mutate(time.trial.begins.z       = as.vector(scale(time.trial.begins))) %>% 
   mutate(group.trapped.pig.order.z = as.vector(scale(group.trapped.pig.order)))
-
-str(dat)
 ```
 
 # Define survival object
@@ -87,7 +85,7 @@ dat <- dat %>%
   arrange(trapped.pig.uniq.id)
 ```
 
--   check correct definition of the survival object using `survival::Surv()`, a `"+"` indicates right censoring (*i.e.*, not helped within 20 minutes or aborted trial).
+-   check correct definition of the survival object using `survival::Surv()`: a "+" at the end of a one-minute interval indicates that the pig is still trapped at the end of that interval. If the last interval for a pig has a plus, this means that the observation is right censored (i.e., the pig was not helped within 20 minutes or the trial was aborted before 20 minutes).
 
 ```{r, data-surv-3}
 with(dat, survival::Surv(tstart, tstop, event))
@@ -99,7 +97,7 @@ with(dat, survival::Surv(tstart, tstop, event))
 
 ## Run full model
 
-```{r, model-full}
+```{r, mod}
 mod <- survival::coxph(
   survival::Surv(tstart, tstop, event) ~ 
     # test predictors
@@ -117,7 +115,7 @@ mod <- survival::coxph(
 
 ## Run reduced model
 
-```{r, model-reduced}
+```{r, mod-red}
 mod.red <- survival::coxph(
   survival::Surv(tstart, tstop, event) ~ 
     # test predictors: none
@@ -133,7 +131,7 @@ mod.red <- survival::coxph(
 
 ## Model comparison
 
-```{r, model-comp}
+```{r, mod-comp}
 lmtest::lrtest(mod.red, mod)
 ```
 
@@ -141,7 +139,7 @@ lmtest::lrtest(mod.red, mod)
 
 -   testing proportional hazards (PH) assumption using graphical diagnostics based on the scaled Schoenfeld residuals
 
-```{r, model-ph, fig.height=10, fig.width=10, warning=FALSE}
+```{r, mod-ph, fig.height=10, fig.width=10, warning=FALSE}
 survminer::ggcoxzph(cox.zph(mod))
 ```
 
@@ -149,7 +147,7 @@ survminer::ggcoxzph(cox.zph(mod))
 
 -   testing for influential observations or outliers using graphical diagnostics of the deviance residuals
 
-```{r, model-outl, fig.height=6, fig.width=6, warning=FALSE}
+```{r, mod-outl, fig.height=6, fig.width=6, warning=FALSE}
 survminer::ggcoxdiagnostics(mod, type = "deviance",
                  linear.predictions = FALSE, ggtheme = my_theme)
 ```
@@ -158,13 +156,13 @@ survminer::ggcoxdiagnostics(mod, type = "deviance",
 
 -   with `car::Anova()` we calculate deviance table and $Wald$ statistic, type II because of no interactions
 
-```{r, model-table}
+```{r, mod-table}
 car::Anova(mod, type ="II", test.statistic = "Wald")
 ```
 
 # Hazard ratios
 
-```{r, model-summary}
+```{r, mod-sum}
 summary(mod)
 ```
 
@@ -176,7 +174,7 @@ summary(mod)
 
 -   using `fastDummies` to dummy-code categorical predictors, continuous predictors are z-transformed
 
-```{r, dummy-code}
+```{r, dat-dum}
 dat.distress <- fastDummies::dummy_cols(dat,
                                    select_columns = c(
                                      "sex",
@@ -267,9 +265,11 @@ version$version.string
 ```
 
 ```{r, cite-packages}
+citation("tidyverse")
 citation("fastDummies")
 citation("survival")
 citation("survminer")
+citation("lmtest")
 ```
 
 # Session Info

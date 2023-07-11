@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Liza Moscovice, Anja Eggert and Jean-Loup Rault">
-<meta name="dcterms.date" content="2023-06-29">
+<meta name="dcterms.date" content="2023-07-10">
 
-<title>Likelihood of helping and window time</title>
+<title>Influences on the likelihood of helping</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -2610,9 +2610,12 @@ vertical-align: -.125em;
    
   <ul>
   <li><a href="#libraries" id="toc-libraries" class="nav-link active" data-scroll-target="#libraries">Libraries</a></li>
-  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a>
+  <ul class="collapse">
   <li><a href="#read-data" id="toc-read-data" class="nav-link" data-scroll-target="#read-data">Read data</a></li>
   <li><a href="#adjust-data-types" id="toc-adjust-data-types" class="nav-link" data-scroll-target="#adjust-data-types">Adjust data types</a></li>
+  <li><a href="#data-summary" id="toc-data-summary" class="nav-link" data-scroll-target="#data-summary">Data summary</a></li>
+  </ul></li>
   <li><a href="#zero-inflated-negative-binomial-model" id="toc-zero-inflated-negative-binomial-model" class="nav-link" data-scroll-target="#zero-inflated-negative-binomial-model">Zero-inflated negative binomial model</a>
   <ul class="collapse">
   <li><a href="#run-full-model" id="toc-run-full-model" class="nav-link" data-scroll-target="#run-full-model">Run full model</a></li>
@@ -2637,7 +2640,7 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Likelihood of helping and window time</h1>
+<h1 class="title">Influences on the likelihood of helping</h1>
 </div>
 
 
@@ -2654,7 +2657,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 29, 2023</p>
+      <p class="date">July 10, 2023</p>
     </div>
   </div>
   
@@ -2671,8 +2674,7 @@ vertical-align: -.125em;
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(viridis)       <span class="co"># color scale</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmmTMB)       <span class="co"># neg. binomial model</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)   <span class="co"># testZeroInflation()</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DHARMa)        <span class="co"># model diagnostics</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fastDummies)   <span class="co"># dummy-coding</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fastDummies)   <span class="co"># dummy-coding</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 
@@ -2683,26 +2685,24 @@ vertical-align: -.125em;
 </section>
 <section id="data" class="level1">
 <h1>Data</h1>
-<p>Likelihood of helping of the potential helper and the attentiveness to trapped pigs.</p>
-</section>
-<section id="read-data" class="level1">
-<h1>Read data</h1>
+<section id="read-data" class="level2">
+<h2 class="anchored" data-anchor-id="read-data">Read data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../data/helping-window-time.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Rows: 638 Columns: 33
+<pre><code>Rows: 638 Columns: 31
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: &quot;,&quot;
 chr (10): trapped.pig.uniq.id, pot.helper.uniq.id, trial, uniq.group, relate...
-dbl (23): Test_subj.opens.testbox, Test_subj.opens.emptybox.to20, Sep_numtim...
+dbl (21): Test_subj.opens.testbox, Test_subj.opens.emptybox.to20, Sep_rate.o...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
 </div>
 </section>
-<section id="adjust-data-types" class="level1">
-<h1>Adjust data types</h1>
+<section id="adjust-data-types" class="level2">
+<h2 class="anchored" data-anchor-id="adjust-data-types">Adjust data types</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(daily.test.order.within.group,</span>
@@ -2710,60 +2710,82 @@ dbl (23): Test_subj.opens.testbox, Test_subj.opens.emptybox.to20, Sep_numtim...
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                 test.day), <span class="sc">~</span><span class="fu">as.factor</span>(.))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+<section id="data-summary" class="level2">
+<h2 class="anchored" data-anchor-id="data-summary">Data summary</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(pot.helper.uniq.id)<span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean.look.min =</span> <span class="fu">mean</span>(prop.look.test.window),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean.help     =</span> <span class="fu">mean</span>(Test_subj.opens.testbox),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_trials      =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">uniq.group =</span> <span class="fu">str_sub</span>(pot.helper.uniq.id,<span class="dv">1</span>,<span class="dv">5</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  rstatix<span class="sc">::</span><span class="fu">get_summary_stats</span>(<span class="fu">c</span>(mean.look.min, mean.help), </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                             <span class="at">show =</span> <span class="fu">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;sd&quot;</span>, <span class="st">&quot;min&quot;</span>, <span class="st">&quot;max&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;iqr&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 8
+  variable          n  mean    sd   min   max median   iqr
+  &lt;fct&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1 mean.look.min    75 0.107 0.107 0.001 0.497  0.063 0.123
+2 mean.help        75 0.102 0.153 0     0.667  0     0.111</code></pre>
+</div>
+</div>
+</section>
+</section>
 <section id="zero-inflated-negative-binomial-model" class="level1">
 <h1>Zero-inflated negative binomial model</h1>
 <p>The zero-inflation model describes the probability of observing an extra (i.e., structural) zero that is not generated by the conditional model.</p>
 <section id="run-full-model" class="level2">
 <h2 class="anchored" data-anchor-id="run-full-model">Run full model</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>contr <span class="ot">=</span> <span class="fu">glmmTMBControl</span>(<span class="at">optimizer =</span> optim, <span class="at">optArgs =</span> <span class="fu">list</span>(<span class="at">method=</span><span class="st">&quot;BFGS&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>contr <span class="ot">=</span> <span class="fu">glmmTMBControl</span>(<span class="at">optimizer =</span> optim, <span class="at">optArgs =</span> <span class="fu">list</span>(<span class="at">method=</span><span class="st">&quot;BFGS&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(Test_subj.opens.testbox <span class="sc">~</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># fixed, continuous predictors</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(<span class="fu">sqrt</span>(train.rate.open.anybox)))<span class="sc">+</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(Sep_rate.open.anybox))<span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(rate.look.testwindow.s.per.min))<span class="sc">+</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(rate.look.emptywindow.s.per.min))<span class="sc">+</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># fixed, categorical predictors</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                 Test_subj.opens.emptybox.to20       <span class="sc">+</span> </span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                 test.day                            <span class="sc">+</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                 daily.test.order.within.group       <span class="sc">+</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                 related                             <span class="sc">+</span> </span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># random effects</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>                 (<span class="dv">1</span><span class="sc">|</span>uniq.group),</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>               <span class="co"># Negative binomial distribution</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>               <span class="at">family =</span> <span class="st">&quot;nbinom2&quot;</span>,</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>               <span class="co"># expect zero-inflation equal in all obs</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>               <span class="at">ziformula =</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>               <span class="co"># data set</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>               <span class="at">data   =</span> dat,</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>               <span class="co"># numerical optimizer</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>               <span class="at">control =</span> contr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(Test_subj.opens.testbox <span class="sc">~</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># fixed, continuous predictors</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(<span class="fu">sqrt</span>(famil.rate.open.anybox)))<span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(Sep_rate.open.anybox))<span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(rate.look.testwindow.s.per.min))<span class="sc">+</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(rate.look.emptywindow.s.per.min))<span class="sc">+</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># fixed, categorical predictors</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                 Test_subj.opens.emptybox.to20       <span class="sc">+</span> </span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                 test.day                            <span class="sc">+</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                 daily.test.order.within.group       <span class="sc">+</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                 related                             <span class="sc">+</span> </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># random effects</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>                 (<span class="dv">1</span><span class="sc">|</span>uniq.group),</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>               <span class="co"># Negative binomial distribution</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>               <span class="at">family =</span> <span class="st">&quot;nbinom2&quot;</span>,</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>               <span class="co"># expect zero-inflation equal in all obs</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>               <span class="at">ziformula =</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>               <span class="co"># data set</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>               <span class="at">data   =</span> dat,</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>               <span class="co"># numerical optimizer</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>               <span class="at">control =</span> contr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="run-reduced-model" class="level2">
 <h2 class="anchored" data-anchor-id="run-reduced-model">Run reduced model</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mod.red <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(Test_subj.opens.testbox <span class="sc">~</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># fixed, continuous predictors</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(Sep_rate.open.anybox))<span class="sc">+</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(rate.look.emptywindow.s.per.min))<span class="sc">+</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># fixed, categorical predictors</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                 Test_subj.opens.emptybox.to20       <span class="sc">+</span> </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                 test.day                            <span class="sc">+</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                 daily.test.order.within.group       <span class="sc">+</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                 related                             <span class="sc">+</span> </span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># random effects</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                 (<span class="dv">1</span><span class="sc">|</span>uniq.group),</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>               <span class="co"># Negative binomial distribution</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>               <span class="at">family =</span> <span class="st">&quot;nbinom2&quot;</span>,</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>               <span class="co"># expect zero-inflation equal in all obs</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>               <span class="at">ziformula =</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>               <span class="co"># data set</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>               <span class="at">data   =</span> dat,</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>               <span class="co"># numerical optimizer</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>               <span class="at">control =</span> contr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mod.red <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(Test_subj.opens.testbox <span class="sc">~</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># fixed, continuous predictors</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(Sep_rate.open.anybox))<span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">as.vector</span>(<span class="fu">scale</span>(rate.look.emptywindow.s.per.min))<span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># fixed, categorical predictors</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                 Test_subj.opens.emptybox.to20       <span class="sc">+</span> </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>                 test.day                            <span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                 daily.test.order.within.group       <span class="sc">+</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                 related                             <span class="sc">+</span> </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># random effects</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>                 (<span class="dv">1</span><span class="sc">|</span>uniq.group),</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>               <span class="co"># Negative binomial distribution</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>               <span class="at">family =</span> <span class="st">&quot;nbinom2&quot;</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>               <span class="co"># expect zero-inflation equal in all obs</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>               <span class="at">ziformula =</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>               <span class="co"># data set</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>               <span class="at">data   =</span> dat,</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>               <span class="co"># numerical optimizer</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>               <span class="at">control =</span> contr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="model-comparison" class="level2">
@@ -2772,7 +2794,7 @@ dbl (23): Test_subj.opens.testbox, Test_subj.opens.emptybox.to20, Sep_numtim...
 <li>Likelihood ratio test compares goodness of fit of of the reduced and the full model, <em>i.e.</em>, determine whether or not adding complexity (adding more parameters) makes the full model significantly more accurate</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod.red, mod, <span class="at">test=</span><span class="st">&#39;Chisq&#39;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod.red, mod, <span class="at">test=</span><span class="st">&#39;Chisq&#39;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Data: dat
 Models:
@@ -2780,7 +2802,7 @@ mod.red: Test_subj.opens.testbox ~ as.vector(scale(Sep_rate.open.anybox)) + , zi
 mod.red:     as.vector(scale(rate.look.emptywindow.s.per.min)) + Test_subj.opens.emptybox.to20 + , zi=~1, disp=~1
 mod.red:     test.day + daily.test.order.within.group + related + (1 | , zi=~1, disp=~1
 mod.red:     uniq.group), zi=~1, disp=~1
-mod: Test_subj.opens.testbox ~ as.vector(scale(sqrt(train.rate.open.anybox))) + , zi=~1, disp=~1
+mod: Test_subj.opens.testbox ~ as.vector(scale(sqrt(famil.rate.open.anybox))) + , zi=~1, disp=~1
 mod:     as.vector(scale(Sep_rate.open.anybox)) + as.vector(scale(rate.look.testwindow.s.per.min)) + , zi=~1, disp=~1
 mod:     as.vector(scale(rate.look.emptywindow.s.per.min)) + Test_subj.opens.emptybox.to20 + , zi=~1, disp=~1
 mod:     test.day + daily.test.order.within.group + related + (1 | , zi=~1, disp=~1
@@ -2796,11 +2818,11 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 <section id="summary-of-model" class="level2">
 <h2 class="anchored" data-anchor-id="summary-of-model">Summary of model</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: nbinom2  ( log )
 Formula:          
-Test_subj.opens.testbox ~ as.vector(scale(sqrt(train.rate.open.anybox))) +  
+Test_subj.opens.testbox ~ as.vector(scale(sqrt(famil.rate.open.anybox))) +  
     as.vector(scale(Sep_rate.open.anybox)) + as.vector(scale(rate.look.testwindow.s.per.min)) +  
     as.vector(scale(rate.look.emptywindow.s.per.min)) + Test_subj.opens.emptybox.to20 +  
     test.day + daily.test.order.within.group + related + (1 |      uniq.group)
@@ -2822,7 +2844,7 @@ Dispersion parameter for nbinom2 family (): 1.29e+04
 Conditional model:
                                                   Estimate Std. Error z value
 (Intercept)                                       -2.47177    0.33937  -7.283
-as.vector(scale(sqrt(train.rate.open.anybox)))     0.33689    0.12746   2.643
+as.vector(scale(sqrt(famil.rate.open.anybox)))     0.33689    0.12746   2.643
 as.vector(scale(Sep_rate.open.anybox))             0.02261    0.07952   0.284
 as.vector(scale(rate.look.testwindow.s.per.min))   0.52078    0.07363   7.073
 as.vector(scale(rate.look.emptywindow.s.per.min))  0.01456    0.13806   0.105
@@ -2835,7 +2857,7 @@ daily.test.order.within.group2                    -0.07437    0.26151  -0.284
 relatedy                                          -0.48795    0.27896  -1.749
                                                   Pr(&gt;|z|)    
 (Intercept)                                       3.26e-13 ***
-as.vector(scale(sqrt(train.rate.open.anybox)))     0.00822 ** 
+as.vector(scale(sqrt(famil.rate.open.anybox)))     0.00822 ** 
 as.vector(scale(Sep_rate.open.anybox))             0.77613    
 as.vector(scale(rate.look.testwindow.s.per.min))  1.52e-12 ***
 as.vector(scale(rate.look.emptywindow.s.per.min))  0.91601    
@@ -2855,32 +2877,45 @@ Zero-inflation model:
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(<span class="fu">round</span>(<span class="fu">confint</span>(<span class="at">object=</span>mod),<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Analysis of Deviance Table (Type II Wald chisquare tests)
-
-Response: Test_subj.opens.testbox
-                                                    Chisq Df Pr(&gt;Chisq)    
-as.vector(scale(sqrt(train.rate.open.anybox)))     6.9854  1   0.008218 ** 
-as.vector(scale(Sep_rate.open.anybox))             0.0809  1   0.776129    
-as.vector(scale(rate.look.testwindow.s.per.min))  50.0264  1  1.517e-12 ***
-as.vector(scale(rate.look.emptywindow.s.per.min))  0.0111  1   0.916006    
-Test_subj.opens.emptybox.to20                      1.9383  1   0.163858    
-test.day                                           0.4344  4   0.979566    
-daily.test.order.within.group                      0.0809  1   0.776118    
-related                                            3.0597  1   0.080258 .  
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre><code>                                                          2.5 %  97.5 %
+cond.(Intercept)                                         -3.137  -1.807
+cond.as.vector(scale(sqrt(famil.rate.open.anybox)))       0.087   0.587
+cond.as.vector(scale(Sep_rate.open.anybox))              -0.133   0.178
+cond.as.vector(scale(rate.look.testwindow.s.per.min))     0.376   0.665
+cond.as.vector(scale(rate.look.emptywindow.s.per.min))   -0.256   0.285
+cond.Test_subj.opens.emptybox.to201                      -0.199   1.172
+cond.test.day2                                           -0.823   0.766
+cond.test.day3                                           -0.718   0.861
+cond.test.day4                                           -0.603   0.920
+cond.test.day5                                           -0.917   0.765
+cond.daily.test.order.within.group2                      -0.587   0.438
+cond.relatedy                                            -1.035   0.059
+zi.(Intercept)                                         -205.848 184.281
+cond.Std.Dev.(Intercept)|uniq.group                       0.000     Inf
+                                                       Estimate
+cond.(Intercept)                                         -2.472
+cond.as.vector(scale(sqrt(famil.rate.open.anybox)))       0.337
+cond.as.vector(scale(Sep_rate.open.anybox))               0.023
+cond.as.vector(scale(rate.look.testwindow.s.per.min))     0.521
+cond.as.vector(scale(rate.look.emptywindow.s.per.min))    0.015
+cond.Test_subj.opens.emptybox.to201                       0.487
+cond.test.day2                                           -0.029
+cond.test.day3                                            0.072
+cond.test.day4                                            0.158
+cond.test.day5                                           -0.076
+cond.daily.test.order.within.group2                      -0.074
+cond.relatedy                                            -0.488
+zi.(Intercept)                                          -10.784
+cond.Std.Dev.(Intercept)|uniq.group                       0.000</code></pre>
 </div>
 </div>
 </section>
 <section id="performance-of-model" class="level2">
 <h2 class="anchored" data-anchor-id="performance-of-model">Performance of model</h2>
-<ul>
-<li><code>performance</code> package used to check model assumptions</li>
-</ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>performance<span class="sc">::</span><span class="fu">check_collinearity</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>performance<span class="sc">::</span><span class="fu">check_collinearity</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Check for Multicollinearity
 
@@ -2889,7 +2924,7 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 Low Correlation
 
                                               Term  VIF   VIF 95% CI
-    as.vector(scale(sqrt(train.rate.open.anybox))) 1.03 [1.00, 1.48]
+    as.vector(scale(sqrt(famil.rate.open.anybox))) 1.03 [1.00, 1.48]
             as.vector(scale(Sep_rate.open.anybox)) 1.18 [1.10, 1.32]
   as.vector(scale(rate.look.testwindow.s.per.min)) 1.09 [1.03, 1.24]
  as.vector(scale(rate.look.emptywindow.s.per.min)) 1.02 [1.00, 1.93]
@@ -2909,7 +2944,7 @@ Low Correlation
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>performance<span class="sc">::</span><span class="fu">check_overdispersion</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>performance<span class="sc">::</span><span class="fu">check_overdispersion</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Overdispersion test
 
@@ -2921,36 +2956,12 @@ Low Correlation
 <pre><code>No overdispersion detected.</code></pre>
 </div>
 </div>
-<ul>
-<li><code>DHARMa</code> package used to test for zero-inflation, which compares the distribution of expected zeros from simulations against the observed zeros</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>DHARMa<span class="sc">::</span><span class="fu">testZeroInflation</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="data:image/png;base64,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" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    DHARMa zero-inflation test via comparison to expected zeros with
-    simulation under H0 = fitted model
-
-data:  simulationOutput
-ratioObsSim = 0.98638, p-value = 0.28
-alternative hypothesis: two.sided</code></pre>
-</div>
-</div>
 </section>
 </section>
 <section id="plot" class="level1">
 <h1>Plot</h1>
-<ul>
-<li>fit an additional <strong>plot.model</strong> with all predictors except the predictor of interest having a mean of zero</li>
-</ul>
 <section id="dummy-coding" class="level2">
 <h2 class="anchored" data-anchor-id="dummy-coding">Dummy-coding</h2>
-<ul>
-<li>using <code>fastDummies</code> to dummy-code categorical predictors, continuous predictors are z-transformed</li>
-</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>dat.dum <span class="ot">&lt;-</span> fastDummies<span class="sc">::</span><span class="fu">dummy_cols</span>(dat,</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">select_columns =</span> <span class="fu">c</span>(</span>
@@ -2975,7 +2986,7 @@ alternative hypothesis: two.sided</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>plot.mod <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(Test_subj.opens.testbox <span class="sc">~</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># fixed, continuous predictors</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">as.vector</span>(<span class="fu">scale</span>(<span class="fu">sqrt</span>(train.rate.open.anybox)))<span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">as.vector</span>(<span class="fu">scale</span>(<span class="fu">sqrt</span>(famil.rate.open.anybox)))<span class="sc">+</span></span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">as.vector</span>(<span class="fu">scale</span>(Sep_rate.open.anybox))<span class="sc">+</span></span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                      <span class="co"># no scaling and converted to proportion for figure</span></span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                      prop.look.test.window <span class="sc">+</span> </span>
@@ -3002,11 +3013,6 @@ alternative hypothesis: two.sided</code></pre>
 </section>
 <section id="extract-fixed-effects" class="level2">
 <h2 class="anchored" data-anchor-id="extract-fixed-effects">Extract fixed effects</h2>
-<ul>
-<li>create a vector spanning the range of <code>prop.look.test.window</code></li>
-<li>get fitted/estimated values for negative binomial part and zero-inflated part, with <code>fixef()</code></li>
-<li>as the fitted values are in the logit-link space, they need to be transformed into the space of the measurements</li>
-</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>coeff.fixed <span class="ot">&lt;-</span> <span class="fu">fixef</span>(plot.mod)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>coeff.ci <span class="ot">&lt;-</span> <span class="fu">confint</span>(plot.mod)</span>
@@ -3042,9 +3048,6 @@ alternative hypothesis: two.sided</code></pre>
 </section>
 <section id="plot-it" class="level2">
 <h2 class="anchored" data-anchor-id="plot-it">Plot it</h2>
-<ul>
-<li>group by <code>pot.helper.uniq.id</code> and calculate the mean of <code>prop.look.test.window</code> and <code>Test_subj.opens.testbox</code></li>
-</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> dat.dum <span class="sc">%&gt;%</span> </span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(pot.helper.uniq.id)<span class="sc">%&gt;%</span></span>
@@ -3225,27 +3228,7 @@ Ein BibTeX-Eintrag für LaTeX-Benutzer ist
     doi = {10.21105/joss.03139},
   }</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;DHARMa&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Um Paket &#39;DHARMa&#39; in Publikationen zu zitieren, nutzen Sie bitte:
-
-  Hartig F (2022). _DHARMa: Residual Diagnostics for Hierarchical
-  (Multi-Level / Mixed) Regression Models_. R package version 0.4.6,
-  &lt;https://CRAN.R-project.org/package=DHARMa&gt;.
-
-Ein BibTeX-Eintrag für LaTeX-Benutzer ist
-
-  @Manual{,
-    title = {DHARMa: Residual Diagnostics for Hierarchical (Multi-Level / Mixed)
-Regression Models},
-    author = {Florian Hartig},
-    year = {2022},
-    note = {R package version 0.4.6},
-    url = {https://CRAN.R-project.org/package=DHARMa},
-  }</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;fastDummies&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">&quot;fastDummies&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Um Paket &#39;fastDummies&#39; in Publikationen zu zitieren, nutzen Sie bitte:
@@ -3270,7 +3253,7 @@ Categorical Variables},
 <section id="session-info" class="level1">
 <h1>Session Info</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.2.0 (2022-04-22 ucrt)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
@@ -3287,37 +3270,38 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] fastDummies_1.6.3  DHARMa_0.4.6       performance_0.10.4 glmmTMB_1.1.7     
- [5] viridis_0.6.3      viridisLite_0.4.2  lubridate_1.9.2    forcats_1.0.0     
- [9] stringr_1.5.0      dplyr_1.1.2        purrr_1.0.1        readr_2.1.4       
-[13] tidyr_1.3.0        tibble_3.2.1       ggplot2_3.4.2      tidyverse_2.0.0   
+ [1] fastDummies_1.6.3  performance_0.10.4 glmmTMB_1.1.7      viridis_0.6.3     
+ [5] viridisLite_0.4.2  lubridate_1.9.2    forcats_1.0.0      stringr_1.5.0     
+ [9] dplyr_1.1.2        purrr_1.0.1        readr_2.1.4        tidyr_1.3.0       
+[13] tibble_3.2.1       ggplot2_3.4.2      tidyverse_2.0.0   
 
 loaded via a namespace (and not attached):
  [1] bit64_4.0.5         vroom_1.6.3         jsonlite_1.8.5     
  [4] splines_4.2.0       carData_3.0-5       datawizard_0.8.0   
- [7] yaml_2.3.7          numDeriv_2016.8-1.1 pillar_1.9.0       
-[10] lattice_0.20-45     glue_1.6.2          digest_0.6.31      
-[13] minqa_1.2.5         colorspace_2.1-0    sandwich_3.0-2     
-[16] htmltools_0.5.5     Matrix_1.5-4.1      pkgconfig_2.0.3    
-[19] xtable_1.8-4        mvtnorm_1.2-2       scales_1.2.1       
-[22] tzdb_0.4.0          lme4_1.1-33         timechange_0.2.0   
-[25] emmeans_1.8.6       farver_2.1.1        car_3.1-2          
-[28] generics_0.1.3      TH.data_1.1-2       withr_2.5.0        
-[31] TMB_1.9.4           cli_3.6.1           survival_3.3-1     
-[34] magrittr_2.0.3      crayon_1.5.2        estimability_1.4.1 
-[37] evaluate_0.21       fansi_1.0.4         nlme_3.1-157       
-[40] MASS_7.3-60         data.table_1.14.8   tools_4.2.0        
-[43] hms_1.1.3           lifecycle_1.0.3     multcomp_1.4-25    
-[46] munsell_0.5.0       compiler_4.2.0      rlang_1.1.1        
-[49] grid_4.2.0          nloptr_2.0.3        rstudioapi_0.14    
-[52] htmlwidgets_1.6.2   labeling_0.4.2      rmarkdown_2.22     
-[55] boot_1.3-28         gtable_0.3.3        codetools_0.2-18   
-[58] abind_1.4-5         R6_2.5.1            gridExtra_2.3      
-[61] zoo_1.8-12          knitr_1.43          fastmap_1.1.1      
-[64] bit_4.0.5           utf8_1.2.3          insight_0.19.2     
-[67] stringi_1.7.12      parallel_4.2.0      Rcpp_1.0.10        
-[70] vctrs_0.6.3         tidyselect_1.2.0    xfun_0.39          
-[73] coda_0.19-4        </code></pre>
+ [7] yaml_2.3.7          backports_1.4.1     numDeriv_2016.8-1.1
+[10] pillar_1.9.0        lattice_0.20-45     glue_1.6.2         
+[13] digest_0.6.31       minqa_1.2.5         colorspace_2.1-0   
+[16] sandwich_3.0-2      htmltools_0.5.5     Matrix_1.5-4.1     
+[19] pkgconfig_2.0.3     broom_1.0.5         xtable_1.8-4       
+[22] mvtnorm_1.2-2       scales_1.2.1        tzdb_0.4.0         
+[25] lme4_1.1-33         timechange_0.2.0    emmeans_1.8.6      
+[28] farver_2.1.1        car_3.1-2           generics_0.1.3     
+[31] TH.data_1.1-2       withr_2.5.0         TMB_1.9.4          
+[34] cli_3.6.1           survival_3.3-1      magrittr_2.0.3     
+[37] crayon_1.5.2        estimability_1.4.1  evaluate_0.21      
+[40] fansi_1.0.4         nlme_3.1-157        MASS_7.3-60        
+[43] rstatix_0.7.2       data.table_1.14.8   tools_4.2.0        
+[46] hms_1.1.3           lifecycle_1.0.3     multcomp_1.4-25    
+[49] munsell_0.5.0       compiler_4.2.0      rlang_1.1.1        
+[52] grid_4.2.0          nloptr_2.0.3        rstudioapi_0.14    
+[55] htmlwidgets_1.6.2   labeling_0.4.2      rmarkdown_2.22     
+[58] boot_1.3-28         gtable_0.3.3        codetools_0.2-18   
+[61] abind_1.4-5         R6_2.5.1            gridExtra_2.3      
+[64] zoo_1.8-12          knitr_1.43          fastmap_1.1.1      
+[67] bit_4.0.5           utf8_1.2.3          insight_0.19.2     
+[70] stringi_1.7.12      parallel_4.2.0      Rcpp_1.0.10        
+[73] vctrs_0.6.3         tidyselect_1.2.0    xfun_0.39          
+[76] coda_0.19-4        </code></pre>
 </div>
 </div>
 </section>
