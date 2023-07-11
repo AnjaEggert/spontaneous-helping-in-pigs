@@ -5,12 +5,14 @@ output:
 ---
 # Spontaneous-helping-in-pigs
 
-This repository contains data and source code to reproduce the data and statistical analysis and figures in the manuscript:
+This repository contains data and source code to reproduce the data and statistical analysis and figures of the article published in the journal "Proceedings of the Royal Society B":
 
-Spontaneous helping in pigs is mediated by helper’s social attention and distress signals of individuals in need
+Spontaneous helping in pigs is mediated by helper's social attention and distress signals of individuals in need
 by Liza R. Moscovice, Anja Eggert, Christian Manteuffel and Jean-Loup Rault
 
 Research Institute for Farm Animal Biology (FBN), Dummerstorf, Germany 
+
+The published article is available online at the following permanent link: https://dx.doi.org/10.1098/rspb.2023.0665.
 
 ## License
 
@@ -34,7 +36,7 @@ We run the data and statistical analysis on Windows 10.
     + `latency-trials.csv`
     + `likelihood-condition.csv`
     + `proportion-familiarization.csv`
-    + `side-preference-box`
+    + `side-preference-box.csv`
     + `survival-distress.csv`
   * Folder *code* with corresponding 10 Quarto-Markdown and rendered HTML files:
     + `cortisol-helper-trapped.qmd`
