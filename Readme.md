@@ -28,27 +28,27 @@ We run the data and statistical analysis on Windows 10.
 
 1. THE REPOSITORY CONTAINS:
   * Folder *data* with 10 csv-files:
-    + `cortisol-helper-trapped.csv`
-    + `cortisol-trapped-pigs.csv`
-    + `helping-window-time.csv`
-    + `latency-condition.csv`
-    + `latency-familiarization.csv`
-    + `latency-trials.csv`
-    + `likelihood-condition.csv`
-    + `proportion-familiarization.csv`
-    + `side-preference-box.csv`
-    + `survival-distress.csv`
+    + `Fig-1-latency-condition.csv`
+    + `Fig-2-helping-window-time.csv`
+    + `Fig-3-survival-distress.csv`
+    + `Fig-S3-latency-familiarization.csv`
+    + `Fig-S4-proportion-familiarization.csv`
+    + `Fig-S5-likelihood-condition.csv`
+    + `Fig-S6-latency-trials.csv`
+    + `Fig-S7-cortisol-helper-trapped.csv`
+    + `Fig-S8-cortisol-trapped-pigs.csv`
+    + `Table-S2-side-preference-box.csv`
   * Folder *code* with corresponding 10 Quarto-Markdown and rendered HTML files:
-    + `cortisol-helper-trapped.qmd`
-    + `cortisol-trapped-pigs.qmd`
-    + `helping-window-time.qmd`
-    + `latency-condition.qmd`
-    + `latency-familiarization.qmd`
-    + `latency-trials.qmd`
-    + `likelihood-condition.qmd`
-    + `proportion-familiarization.qmd`
-    + `side-preference-box.qmd`
-    + `survival-distress.qmd`
+    + `Fig-1-latency-condition.qmd`
+    + `Fig-2-helping-window-time.qmd`
+    + `Fig-3-survival-distress.qmd`
+    + `Fig-S3-latency-familiarization.qmd`
+    + `Fig-S4-proportion-familiarization.qmd`
+    + `Fig-S5-likelihood-condition.qmd`
+    + `Fig-S6-latency-trials.qmd`
+    + `Fig-S7-cortisol-helper-trapped.qmd`
+    + `Fig-S8-cortisol-trapped-pigs.qmd`
+    + `Table-S2-side-preference-box.qmd`
 2. TABLES
     + Table 1: Results of LMM predicting the influence of condition (separation/test trial) and identity of compartment (empty/test compartment) on the latency for pigs to first open a door (*latency-condition*)
     + Table 2: Results of a zero-inflated negative binomial model predicting the likelihood of helping (*helping-window-time*)
