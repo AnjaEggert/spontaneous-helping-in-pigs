@@ -1,6 +1,6 @@
 ---
 title: "Behavioral responses to being trapped and changes in cortisol in trapped pigs"
-author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
+author: "Liza Moscovice, Anja Eggert, Christian Manteuffel and Jean-Loup Rault"
 date: "`r Sys.Date()`" 
 editor: visual
 code-fold: false
@@ -36,7 +36,7 @@ set.seed(1989)
 ## Read data
 
 ```{r, data}
-dat <- read_csv("../data/cortisol-trapped-pigs.csv")
+dat <- read_csv("../data/Fig-S8-cortisol-trapped-pigs.csv")
 ```
 
 ## Adjust data types
@@ -51,8 +51,12 @@ dat <- dat %>%
 
 ```{r, data-sum}
 dat %>% 
+  group_by(context) %>% 
   rstatix::get_summary_stats(c(cort), 
-                             show = c("mean", "sd", "min", "max", "median", "iqr"))
+                             show = c("mean", "sd",
+                                      "min", "max",
+                                      "median", "iqr")) %>% 
+  ungroup()
 ```
 
 # Linear mixed model
@@ -105,7 +109,9 @@ mod.red <- lmer(sqrt(cort) ~
 ## Model comparison
 
 ```{r, mod-anova}
-anova(update(mod.red, REML = FALSE), update(mod, REML = FALSE), test = "Chisq")
+anova(update(mod.red, REML = FALSE), 
+      update(mod, REML = FALSE), 
+      test = "Chisq")
 ```
 
 ## Summary of model
@@ -115,8 +121,8 @@ summary(mod)
 ```
 
 ```{r, mod-sum-2}
-round(drop1(mod,test='Chisq'),3)
-as.data.frame(round(confint(object=mod),3)) 
+round(drop1(mod,test = 'Chisq'),3)
+as.data.frame(round(confint(object = mod),3)) 
 ```
 
 ## Performance of model

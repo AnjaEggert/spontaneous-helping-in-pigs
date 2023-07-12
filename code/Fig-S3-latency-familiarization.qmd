@@ -1,6 +1,6 @@
 ---
 title: "Group latencies to open compartments over familiarization days"
-author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
+author: "Liza Moscovice, Anja Eggert, Christian Manteuffel and Jean-Loup Rault"
 date: "`r Sys.Date()`" 
 editor: visual
 code-fold: false
@@ -19,9 +19,9 @@ library(emmeans)       # emmeans
 
 ```{r, my_theme, echo = FALSE}
 my_theme = theme_classic() +
-  theme(axis.title = element_text(face="bold", size=14),
-        axis.text  = element_text(size=12, angle = 0, vjust = 0.5),
-        plot.title = element_text(face="bold", size=14),
+  theme(axis.title = element_text(face = "bold", size = 14),
+        axis.text  = element_text(size = 12, angle = 0, vjust = 0.5),
+        plot.title = element_text(face = "bold", size = 14),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 ```
@@ -35,7 +35,7 @@ set.seed(1989)
 ## Read data
 
 ```{r, data, warning = FALSE}
-dat <- read_csv("../data/latency-familiarization.csv")
+dat <- read_csv("../data/Fig-S3-latency-familiarization.csv")
 ```
 
 ## Adjust data types
@@ -53,7 +53,9 @@ dat <- dat %>%
 dat %>% 
   group_by(familiarization_day, location.box)%>%
   rstatix::get_summary_stats(c(latency.open.min), 
-                             show = c("mean", "sd", "min", "max", "median", "iqr")) %>% 
+                             show = c("mean", "sd", 
+                                      "min", "max", 
+                                      "median", "iqr")) %>% 
   ungroup()
 ```
 
@@ -100,7 +102,9 @@ mod.red <- lmer(log(latency.open.min) ~
 ## Model comparison
 
 ```{r, mod-anova}
-anova(update(mod.red, REML = FALSE), update(mod, REML = FALSE), test = "Chisq")
+anova(update(mod.red, REML = FALSE), 
+      update(mod, REML = FALSE), 
+      test = "Chisq")
 ```
 
 ## Summary of model
@@ -110,8 +114,8 @@ summary(mod)
 ```
 
 ```{r, mod-sum-2}
-round(drop1(mod,test='Chisq'),3)
-as.data.frame(round(confint(object=mod),3)) 
+round(drop1(mod, test = 'Chisq'), 3)
+as.data.frame(round(confint(object = mod), 3)) 
 ```
 
 ## Performance of model
@@ -124,16 +128,7 @@ performance::check_model(mod)
 
 ## Within comparisons
 
-```{r, mod-emm-1}
-emm <- emmeans(mod, 
-               specs  = pairwise ~ location.box | familiarization_day,
-               type   = "response",
-               adjust = "tukey")
-
-emm
-```
-
-```{r, mod-emm-2}
+```{r, mod-emm}
 emm <- emmeans(mod, 
                specs  = pairwise ~ familiarization_day | location.box,
                type   = "response",

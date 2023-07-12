@@ -1,6 +1,6 @@
 ---
 title: "Latencies to open compartments during test trials and during the preceding separation"
-author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
+author: "Liza Moscovice, Anja Eggert, Christian Manteuffel and Jean-Loup Rault"
 date: "`r Sys.Date()`" 
 editor: visual
 code-fold: false
@@ -35,7 +35,7 @@ set.seed(1989)
 ## Read data
 
 ```{r, data, warning = FALSE}
-dat <- read_csv("../data/latency-condition.csv")
+dat <- read_csv("../data/Fig-1-latency-condition.csv")
 ```
 
 ## Adjust data types
@@ -52,7 +52,9 @@ dat <- dat %>%
 dat %>% 
   group_by(condition, identity.box.first.opened)%>%
   rstatix::get_summary_stats(c(lat.first.open.min), 
-                             show = c("mean", "sd", "min", "max", "median", "iqr")) %>% 
+                             show = c("mean", "sd", 
+                                      "min", "max", 
+                                      "median", "iqr")) %>% 
   ungroup()
 ```
 
@@ -103,7 +105,9 @@ mod.red <- lmer(log(lat.first.open.min) ~
 ## Model comparison
 
 ```{r, mod-anova}
-anova(update(mod.red, REML = FALSE), update(mod, REML = FALSE), test = "Chisq")
+anova(update(mod.red, REML = FALSE), 
+      update(mod, REML = FALSE), 
+      test = "Chisq")
 ```
 
 ## Summary of model
@@ -113,8 +117,8 @@ summary(mod)
 ```
 
 ```{r, mod-sum-2}
-round(drop1(mod,test='Chisq'),3)
-as.data.frame(round(confint(object=mod),3)) 
+round(drop1(mod, test = 'Chisq'),3)
+as.data.frame(round(confint(object = mod),3)) 
 ```
 
 ## Performance of model
@@ -127,7 +131,7 @@ performance::check_model(mod)
 
 ## All comparisons
 
-```{r, mod-emm-1}
+```{r, mod-emm}
 emm <- emmeans(mod, 
                specs  = pairwise ~ identity.box.first.opened * condition,
                type   = "response",
@@ -136,41 +140,9 @@ emm <- emmeans(mod,
 emm
 ```
 
-## Simple comparisons
-
-```{r, mod-emm-2}
-emm <- emmeans(mod, 
-               specs  = pairwise ~ identity.box.first.opened * condition,
-               type   = "response",
-               adjust = "tukey")
-
-simp <- pairs(emm, simple = "each")
-simp
-```
-
-## Within comparisons
-
-```{r, mod-emm-3}
-emm <- emmeans(mod, 
-               specs  = pairwise ~ identity.box.first.opened | condition,
-               type   = "response",
-               adjust = "tukey")
-
-emm$emmeans
-
-emm$contrasts
-```
-
 # Plot
 
 ## Compact letter display
-
-```{r, mod-emm-4}
-emm <- emmeans(mod, 
-               specs  = pairwise ~ identity.box.first.opened * condition,
-               type   = "response",
-               adjust = "tukey")
-```
 
 ```{r, mod-cld}
 cld <- multcomp::cld(emm$emmeans, Letters=letters)

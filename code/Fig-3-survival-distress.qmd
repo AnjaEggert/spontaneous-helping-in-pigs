@@ -1,6 +1,6 @@
 ---
 title: "Influences on the likelihood and latency to be helped"
-author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
+author: "Liza Moscovice, Anja Eggert, Christian Manteuffel and Jean-Loup Rault"
 date: "`r Sys.Date()`" 
 editor: visual
 code-fold: false
@@ -39,7 +39,7 @@ Using survival analysis to analyse time to open door for trapped pigs. Data set 
 ## Read data
 
 ```{r, data, warning = FALSE}
-dat <- read_csv("../data/survival-distress.csv")
+dat <- read_csv("../data/Fig-3-survival-distress.csv")
 ```
 
 ## Adjust data types

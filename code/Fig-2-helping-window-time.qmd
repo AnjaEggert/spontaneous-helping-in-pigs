@@ -1,6 +1,6 @@
 ---
 title: "Influences on the likelihood of helping"
-author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
+author: "Liza Moscovice, Anja Eggert, Christian Manteuffel and Jean-Loup Rault"
 date: "`r Sys.Date()`" 
 editor: visual
 code-fold: false
@@ -37,7 +37,7 @@ set.seed(1989)
 ## Read data
 
 ```{r, data}
-dat <- read_csv("../data/helping-window-time.csv")
+dat <- read_csv("../data/Fig-2-helping-window-time.csv")
 ```
 
 ## Adjust data types
@@ -47,20 +47,6 @@ dat <- dat %>%
   mutate_at(vars(daily.test.order.within.group,
                  Test_subj.opens.emptybox.to20,
                  test.day), ~as.factor(.))
-```
-
-## Data summary
-
-```{r, data-sum}
-dat %>% 
-  group_by(pot.helper.uniq.id)%>%
-  summarise(mean.look.min = mean(prop.look.test.window),
-            mean.help     = mean(Test_subj.opens.testbox),
-            n_trials      = n()) %>% 
-  ungroup() %>% 
-  mutate(uniq.group = str_sub(pot.helper.uniq.id,1,5)) %>%
-  rstatix::get_summary_stats(c(mean.look.min, mean.help), 
-                             show = c("mean", "sd", "min", "max", "median", "iqr"))
 ```
 
 # Zero-inflated negative binomial model
@@ -126,7 +112,8 @@ mod.red <- glmmTMB(Test_subj.opens.testbox ~
 -   Likelihood ratio test compares goodness of fit of of the reduced and the full model, *i.e.*, determine whether or not adding complexity (adding more parameters) makes the full model significantly more accurate
 
 ```{r, mod-anova}
-anova(mod.red, mod, test='Chisq')
+anova(mod.red, 
+      mod, test='Chisq')
 ```
 
 ## Summary of model
@@ -136,7 +123,8 @@ summary(mod)
 ```
 
 ```{r, mod-sum-2}
-as.data.frame(round(confint(object=mod),3))
+round(drop1(mod, test = 'Chisq'),3)
+as.data.frame(round(confint(object = mod),3))
 ```
 
 ## Performance of model

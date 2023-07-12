@@ -1,6 +1,6 @@
 ---
 title: "Testing for a location preference for opening compartments (at front or side of pen)"
-author: "Liza Moscovice, Anja Eggert and Jean-Loup Rault"
+author: "Liza Moscovice, Anja Eggert, Christian Manteuffel and Jean-Loup Rault"
 date: "`r Sys.Date()`" 
 editor: visual
 code-fold: false
@@ -22,7 +22,7 @@ library(rstatix)       # binom_test()
 ## Read data
 
 ```{r, data, warning = FALSE}
-dat <- read_csv("../data/side-preference-box.csv")
+dat <- read_csv("../data/Table-S2-side-preference-box.csv")
 ```
 
 # Binomial test
@@ -33,7 +33,7 @@ dat <- read_csv("../data/side-preference-box.csv")
 dat %>% 
   group_by(familiarization.day, location.box) %>% 
   summarize(nto = sum(number.times.opens)) %>% 
-  pivot_wider(names_from = location.box, 
+  pivot_wider(names_from  = location.box, 
               values_from = nto) %>% 
   ungroup() %>% 
   # test per fam day
@@ -55,7 +55,7 @@ dat %>%
 dat %>% 
   group_by(pig.unique.id, location.box) %>% 
   summarize(nto = sum(number.times.opens)) %>% 
-  pivot_wider(names_from = location.box, 
+  pivot_wider(names_from  = location.box, 
               values_from = nto) %>% 
   replace(is.na(.), 0) %>% 
   ungroup() %>% 
@@ -79,7 +79,7 @@ dat %>%
 dat %>% 
   group_by(unique.group, location.box) %>% 
   summarize(nto = sum(number.times.opens)) %>% 
-  pivot_wider(names_from = location.box, 
+  pivot_wider(names_from  = location.box, 
               values_from = nto) %>% 
   replace(is.na(.), 0) %>% 
   ungroup() %>% 
