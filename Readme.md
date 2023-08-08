@@ -28,26 +28,26 @@ We run the data and statistical analysis on Windows 10.
 
 1. THE REPOSITORY CONTAINS:
   * Folder *data* with 10 csv-files:
-    + `Fig-1-latency-condition.csv`
-    + `Fig-2-helping-window-time.csv`
-    + `Fig-3-survival-distress.csv`
+    + `Fig-2-latency-condition.csv`
+    + `Fig-3-helping-window-time.csv`
+    + `Fig-4-survival-distress.csv`
+    + `Fig-S2-proportion-familiarization.csv`
     + `Fig-S3-latency-familiarization.csv`
-    + `Fig-S4-proportion-familiarization.csv`
+    + `Fig-S4-latency-trials.csv`
     + `Fig-S5-likelihood-condition.csv`
-    + `Fig-S6-latency-trials.csv`
-    + `Fig-S7-cortisol-helper-trapped.csv`
-    + `Fig-S8-cortisol-trapped-pigs.csv`
+    + `Fig-S6-cortisol-helper-trapped.csv`
+    + `Fig-S7-cortisol-trapped-pigs.csv`
     + `Table-S2-side-preference-box.csv`
   * Folder *code* with corresponding 10 Quarto-Markdown and rendered HTML files:
-    + `Fig-1-latency-condition.qmd`
-    + `Fig-2-helping-window-time.qmd`
-    + `Fig-3-survival-distress.qmd`
+    + `Fig-2-latency-condition.qmd`
+    + `Fig-3-helping-window-time.qmd`
+    + `Fig-4-survival-distress.qmd`
+    + `Fig-S2-proportion-familiarization.qmd`
     + `Fig-S3-latency-familiarization.qmd`
-    + `Fig-S4-proportion-familiarization.qmd`
+    + `Fig-S4-latency-trials.qmd`
     + `Fig-S5-likelihood-condition.qmd`
-    + `Fig-S6-latency-trials.qmd`
-    + `Fig-S7-cortisol-helper-trapped.qmd`
-    + `Fig-S8-cortisol-trapped-pigs.qmd`
+    + `Fig-S6-cortisol-helper-trapped.qmd`
+    + `Fig-S7-cortisol-trapped-pigs.qmd`
     + `Table-S2-side-preference-box.qmd`
 2. TABLES
     + Table 1: Results of LMM predicting the influence of condition (separation/test trial) and identity of compartment (empty/test compartment) on the latency for pigs to first open a door (*latency-condition*)
@@ -58,15 +58,15 @@ We run the data and statistical analysis on Windows 10.
     + Table S3: Results of binomial GLMM to test for differences in likelihood of opening door in different conditions (*likelihood-condition*)
     + Table S4: Results of a LMM predicting how different distress signals relate to changes in salivary cortisol in trapped pigs (*cortisol-trapped-pigs*)
 3. FIGURES
-    + Figure 1. Latency for pigs to first open a door depending on condition (separation/test trial) and identity of compartment (empty/test compartment) (*latency-condition*)
-    + Figure 2: Relationship between each potential helper’s social attention to the trapped pig and their likelihood of helping (*helping-window-time*)
-    + Figure 3: Survival curve showing the probability for trapped pigs (n = 58) to be helped by another group member (*survival-distress*)
-    + Figure S1: Schematic drawing
-    + Figure S2: Foto of the test compartment
+    + Figure 1: Schematic drawing
+    + Figure 2. Latency for pigs to first open a door depending on condition (separation/test trial) and identity of compartment (empty/test compartment) (*latency-condition*)
+    + Figure 3: Relationship between each potential helper’s social attention to the trapped pig and their likelihood of helping (*helping-window-time*)
+    + Figure 4: Survival curve showing the probability for trapped pigs (n = 58) to be helped by another group member (*survival-distress*)
+    + Figure S1: Foto of the test compartment
+    + Figure S2: Proportion of pigs who successfully opened a door across familiarization (*proportion-familiarization*)
     + Figure S3: Daily latency for a door to be opened within each group during familiarization and based on box location (*latency-familiarization*)
-    + Figure S4: Proportion of pigs who successfully opened a door across familiarization (*proportion-familiarization*)
+    + Figure S4: Latency for helper pigs to release trapped pigs across trials within each group (*latency-trials*)
     + Figure S5: Likelihood of opening door in different conditions (*likelihood-condition*)
-    + Figure S6: Latency for helper pigs to release trapped pigs across trials within each group (*latency-trials*)
-    + Figure S7: Comparison of post-release salivary cortisol concentrations in trapped pigs and their helpers (*cortisol-helper-trapped*)
-    + Figure S8: Comparison of changes in salivary cortisol concentrations in pigs depending on distress signals while trapped (*cortisol-trapped-pigs*)
+    + Figure S6: Comparison of post-release salivary cortisol concentrations in trapped pigs and their helpers (*cortisol-helper-trapped*)
+    + Figure S7: Comparison of changes in salivary cortisol concentrations in pigs depending on distress signals while trapped (*cortisol-trapped-pigs*)
   
